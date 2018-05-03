@@ -1,0 +1,39 @@
+{
+    "name": "generoi/robo-genero",
+    "type": "robo-tasks",
+    "license": "MIT",
+    "description": "Genero tasks for Robo Task Runner",
+    "homepage": "https://github.com/generoi/robo-genero",
+    "authors": [
+        {
+            "name": "Oskar Schöldström",
+            "email": "public@oxy.fi"
+        }
+    ],
+    "keywords": [
+        "robo"
+    ],
+    "support": {
+        "issues": "https://github.com/generoi/robo-genero/issues"
+    },
+    "autoload": {
+        "psr-4": {
+            "Generoi\\Robo\\Task\\": "src"
+        },
+        "classmap": [
+            "ComposerScript.php"
+        ]
+    },
+    "require": {
+        "php": ">=5.6.0",
+        "consolidation/robo": "~1"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^2.5.1"
+    },
+    "scripts": {
+        "test": [
+            "vendor/bin/phpcs"
+        ]
+    }
+}
