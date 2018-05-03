@@ -14,6 +14,17 @@ trait loadCommands
     {
         Robo::loadConfiguration([getcwd() . '/robo.yml']);
     }
+
+    /**
+     * Get the path of the theme
+     *
+     * @return string
+     */
+    protected function getThemePath()
+    {
+        return Robo::config()->get('theme_path');
+    }
+
     /**
      * Run test suite.
      */

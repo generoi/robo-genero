@@ -8,6 +8,8 @@ Require `robo` and this package to your project.
 
     composer require consolidation/robo generoi/robo-genero
 
+#### Composer scripts
+
 Add the following `scripts` section to your `composer.json`
 
 ```json
@@ -21,7 +23,35 @@ Add the following `scripts` section to your `composer.json`
   }
 ```
 
+#### `RoboFile.php`
+
 Add a `RoboFile.php`, you can check Genero's Bedrock repository for an example.
+
+```php
+<?php
+
+use Robo\Robo;
+
+class RoboFile extends \Robo\Tasks
+{
+    use Generoi\Robo\Task\loadTasks;
+    use Generoi\Robo\Task\loadCommands {
+        test as public;
+        sniff as public testSniff;
+        buildProduction as public;
+        buildDevelopment as public;
+        installProduction as public;
+        installDevelopment as public;
+        searchReplace as public;
+        setup as public;
+        setupTheme as public;
+        setupRemote as public;
+        setupYaml as public;
+    }
+}
+```
+
+#### `robo.yml`
 
 Create a `robo.yml` file:
 
