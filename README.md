@@ -118,3 +118,15 @@ task:
         progress: true
         humanReadable: true
 ```
+
+## Usage
+
+```
+robo build:production
+robo rsync production:~/.bashrc .
+robo rsync:pull production:%files
+robo files:pull production
+robo test:sniff --autofix
+robo setup
+robo search:replace
+```
