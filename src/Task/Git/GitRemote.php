@@ -11,7 +11,7 @@ use Robo\Result;
  * ``` php
  * <?php
  * $this->taskGitRemote('git@github.com:generoi/foobar.git')
- *     ->openGithub()
+ *     ->open()
  *     ->run();
  * ?>
  * ```
@@ -36,7 +36,7 @@ class GitRemote extends Base
     /**
      * @var bool
      */
-    protected $openGithub = false;
+    protected $open = false;
 
     /**
      * @param  string  $remote
@@ -53,9 +53,9 @@ class GitRemote extends Base
      * @param  bool  $open
      * @return $this
      */
-    public function openGithub($open = true)
+    public function open($open = true)
     {
-        $this->openGithub = $open;
+        $this->open = $open;
         return $this;
     }
 
@@ -99,7 +99,7 @@ class GitRemote extends Base
             if (!$result->wasSuccessful()) {
                 return $result;
             }
-            if ($this->openGithub) {
+            if ($this->open) {
                 $this->executeCommand("open https://github.com/organizations/{$this->getGitUser()}/repositories/new");
             }
             $this->printTaskSuccess('Changed git remote');
@@ -110,4 +110,3 @@ class GitRemote extends Base
         return Result::success($this, '');
     }
 }
-

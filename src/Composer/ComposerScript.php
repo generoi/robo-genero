@@ -1,0 +1,97 @@
+<?php
+
+namespace Generoi\Robo\Composer;
+
+use Composer\Script\Event;
+use Symfony\Component\Process\Exception\RuntimeException;
+use Symfony\Component\Process\Process;
+
+class ComposerScript
+{
+    /**
+     * @var \Composer\Script\Event
+     */
+    public $event;
+
+    /**
+     * @param  \Composer\Script\Event
+     */
+    public function __construct(Event $event = null)
+    {
+        $this->event = $event;
+    }
+
+    /**
+     * Run the robo setup command.
+     *
+     * @param  \Composer\Script\Event
+     * @return $this
+     */
+    public static function postCreateProject(Event $event)
+    {
+        return (new static($event))->validate()->robo('setup');
+    }
+
+    /**
+     * Delegate all calls directly to robo.
+     */
+    public static function __callStatic($name, $arguments)
+    {
+        list($event) = $arguments;
+        $command = preg_replace('/[A-Z]/', ':$1', $name);
+        return (new static($event))->robo($command);
+    }
+
+    /**
+     * Execute a robo command.
+     *
+     * @param  string  $command
+     * @return $this
+     */
+    public function robo($command)
+    {
+        $robo = getcwd() . '/vendor/bin/robo';
+        return $this->run(new Process(sprintf('php %s %s', $robo, $command)));
+    }
+
+    /**
+     * Verify that interactive mode is available.
+     *
+     * @return $this
+     */
+    public function validate()
+    {
+        if (!$this->isInteractive()) {
+            throw new Symfony\Component\Process\Exception\RuntimeException('Interactive mode is required');
+        }
+        return $this;
+    }
+
+    /**
+     * Check if this is interactive mode.
+     *
+     * @return bool
+     */
+    protected function isInteractive()
+    {
+        return $this->event->getIO()->isInteractive();
+    }
+
+    /**
+     * Run a process.
+     *
+     * @param  \Symfony\Component\Process\Process  $process
+     * @return $this
+     */
+    public function run(Process $process)
+    {
+        try {
+            $process->setTty($this->isInteractive());
+        } catch (RuntimeException $e) {
+            // do nothing.
+        }
+
+        $process->run();
+        return $this;
+    }
+}

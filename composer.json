@@ -18,11 +18,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Generoi\\Robo\\Task\\": "src"
-        },
-        "classmap": [
-            "ComposerScript.php"
-        ]
+            "Generoi\\Robo\\": "src"
+        }
     },
     "require": {
         "php": ">=5.6.0",
