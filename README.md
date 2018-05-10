@@ -121,7 +121,8 @@ task:
 
 ## Usage
 
-```
+```sh
+robo list
 robo build:production
 robo rsync production:~/.bashrc .
 robo rsync:pull production:%files

@@ -16,9 +16,9 @@ trait RsyncCommand
      * Rsync files between two targets.
      *
      * @param  string  $source  Source target. Can be an aliased string
-     *     `production:%files`
+     *     `@production:%files`
      * @param  string  $destination  Destination target. Can
-     *     be an aliased string `production:%files`
+     *     be an aliased string `@production:%files`
      * @param  array  $options
      * @option $dry-run (bool) Run a dry-run before
      * @option $exclude (array) Exclude patterns
@@ -67,12 +67,10 @@ trait RsyncCommand
     }
 
     /**
-     * Pull files from remote to self.
-     *
-     * rsync:pull staging:%files
+     * Pull files from remote to self. For example: `rsync:pull @staging:%files`
      *
      * @param  string  $source  Source target. Can be an aliased string
-     *     `production:%files`
+     *     `@production:%files`
      * @param  array  $options
      * @option $dry-run (bool) Run a dry-run before
      * @return \Robo\Result
@@ -89,10 +87,10 @@ trait RsyncCommand
     }
 
     /**
-     * Push files from self to remote.
+     * Push files from self to remote. For example: `rsync:push @staging:%files`
      *
      * @param  string  $destination  Destination target. Can be an aliased
-     *     string `production:%files`
+     *     string `@production:%files`
      * @param  array  $options
      * @option $dry-run (bool) Run a dry-run before
      * @return \Robo\Result
