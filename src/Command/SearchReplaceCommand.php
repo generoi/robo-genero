@@ -12,10 +12,13 @@ trait SearchReplaceCommand
      * @param  string  $from  The search string
      * @param  string  $to  The replacement value
      * @param  array  $options
-     * @option $force (bool) Do not prompt for replacement
+     * @option $dirs (string|array) Directories to search in
+     * @option $exclude (string|array) Paths to exclude from search
      */
     public function searchReplace($from = null, $to = null, $options = [
         'force' => false,
+        'dirs' => [],
+        'exclude' => [],
     ])
     {
         if (empty($from)) {
@@ -25,7 +28,9 @@ trait SearchReplaceCommand
             $to = $this->askDefault('Replace with', Robo::config()->get('machine_name'));
         }
 
-        $result = $this->taskPlaceholderFind($from)
+        $result = $this->taskPlaceholderFind($from, $options)
+            ->directories($options['dirs'])
+            ->exclude($options['exclude'])
             ->io($this->io())
             ->run();
 

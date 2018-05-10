@@ -4,9 +4,8 @@ namespace Generoi\Robo\Task\Placeholder;
 
 trait loadTasks
 {
-
     /**
-     * @param null|string  $placeholder
+     * @param  null|string  $placeholder
      * @return \Generoi\Robo\Task\Placeholder\Find
      */
     protected function taskPlaceholderFind($placeholder = null)

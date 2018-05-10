@@ -39,23 +39,33 @@ class Find extends BaseTask
     /**
      * @var array
      */
-    protected $exclude = [
-        'RoboFile.php',
-        'robo.yml',
+    protected $exclude = [];
+
+    /**
+     * Binary path matches that are always excluded.
+     */
+    protected $forceExclude = [
+        '.map',
+        '.lock',
+        '.jpg',
+        '.jpeg',
+        '.gif',
+        '.png',
+        '.eot',
+        '.ttf',
+        '.svg',
+        '.woff',
+        '.woff2',
         'node_modules',
         'vendor',
         '.cache-loader',
-        'dist',
-        '*.map'
     ];
 
     /**
      * @var array
      */
     protected $dirs = [
-        'config',
-        'web/app/themes',
-        'web/app/mu-plugins',
+        '.'
     ];
 
     /**
@@ -84,6 +94,7 @@ class Find extends BaseTask
      */
     public function checkRootFiles($check = true)
     {
+        $this->printTaskInfo('Checking root files');
         $this->checkRootFiles = $check;
         return $this;
     }
@@ -91,24 +102,30 @@ class Find extends BaseTask
     /**
      * Directories to check.
      *
-     * @param  array  $directories
+     * @param  string|array  $directories
      * @return $this
      */
-    public function directories(array $directories)
+    public function directories($directories)
     {
-        $this->dirs = $directories;
+        if (!$directories) {
+            return $this;
+        }
+        $this->dirs = is_string($directories) ? explode(',', $directories) : (array) $directories;
         return $this;
     }
 
     /**
      * Paths to exclude
      *
-     * @param  array  $exclude
+     * @param  string|array  $exclude
      * @return $this
      */
-    public function exclude(array $exclude)
+    public function exclude($exclude)
     {
-        $this->exclude = $exclude;
+        if (!$exclude) {
+            return $this;
+        }
+        $this->exclude = is_string($exclude) ? explode(',', $exclude) : (array) $exclude;
         return $this;
     }
 
@@ -146,7 +163,11 @@ class Find extends BaseTask
             ->ignoreDotFiles(false)
             ->contains("/{$this->placeholder}/");
 
-        foreach ($this->exclude as $exclude) {
+        $excludes = array_merge($this->forceExclude, $this->exclude);
+        $this->printTaskInfo('Checking directories: <info>{directories}</info>', ['directories' => implode(', ', $this->dirs)]);
+        $this->printTaskInfo('Excluding: <info>{excludes}</info>', ['excludes' => implode(', ', $excludes)]);
+
+        foreach ($excludes as $exclude) {
             $rootFinder->notPath($exclude);
             $finder->notPath($exclude);
         }
