@@ -14,7 +14,8 @@ trait loadCommands
         TestCommand,
         InstallCommand,
         BuildCommand,
+        WpCommand,
         ThemeTrait {
-            ThemeTrait::getThemePath insteadof InstallCommand, TestCommand, BuildCommand;
+            ThemeTrait::getThemePath insteadof InstallCommand, TestCommand, BuildCommand, WpCommand;
     }
 }

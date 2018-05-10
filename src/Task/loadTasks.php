@@ -10,5 +10,6 @@ trait loadTasks
     use PhpCodeSniffer\loadTasks;
     use Placeholder\loadTasks;
     use Remote\loadTasks;
+    use Wp\loadTasks;
     use Yaml\loadTasks;
 }
