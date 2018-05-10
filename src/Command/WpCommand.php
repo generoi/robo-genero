@@ -104,6 +104,7 @@ trait WpCommand
             ->network()
             ->skipColumns('guid')
             ->searchReplace($sourceUrl, $targetUrl)
+            ->skipColumns('guid')
             ->searchReplace(parse_url($sourceUrl, PHP_URL_HOST), parse_url($targetUrl, PHP_URL_HOST))
             ->cache('flush')
             ->run();
