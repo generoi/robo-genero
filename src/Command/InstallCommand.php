@@ -15,13 +15,6 @@ trait InstallCommand
     public function installProduction()
     {
         $this->taskComposerInstall()
-            ->noDev()
-            ->noInteraction()
-            ->optimizeAutoloader()
-            ->option('quiet')
-            ->run();
-
-        $this->taskComposerInstall()
             ->dir($this->getThemePath())
             ->noDev()
             ->noInteraction()
@@ -35,7 +28,6 @@ trait InstallCommand
      */
     public function installDevelopment()
     {
-        $this->taskComposerInstall()->run();
         $this->taskExec('vendor/bin/cghooks')->arg('update')->run();
         $this->taskExec('bundle')->run();
 
