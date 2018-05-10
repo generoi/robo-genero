@@ -39,27 +39,50 @@ trait SetupCommand
             $options['theme-repository'] = $this->askDefault('Git repository to clone theme from', $config->get('command.setup.theme.options.theme-repository'));
         }
 
+        $this->writeln('');
+        $this->writeln(sprintf('  Machine name: <info>%s</info>', $machineName));
+        $this->writeln(sprintf('  Git remote: <info>%s</info>', $options['remote']));
+        $this->writeln(sprintf('  Theme repository: <info>%s</info>', $options['theme-repository']));
+        $this->writeln('');
+
         // Modify robo.yml
         if (!empty($machineName)) {
+            $this->writeln(sprintf('Running <info>%s</info>', 'setup:yaml'));
             $this->setupYaml($machineName);
             $config = Robo::config();
         }
 
         // Clone theme
         if (!empty($options['theme-repository'])) {
+            $this->writeln(sprintf('Running <info>%s</info>', 'setup:theme'));
             $this->setupTheme($config->get('theme_path'), $options);
         }
 
         // Set git remote
         if (!empty($options['remote'])) {
+            $this->writeln(sprintf('Running <info>%s</info>', 'setup:remote'));
             $this->setupRemote($options['remote']);
         }
 
         // Search and replace all placeholders
+        $this->writeln(sprintf('Running <info>%s</info>', 'search:replace'));
         $this->searchReplace(null, null, $config->get('command.search.replace.options'));
 
         // Install development packages
+        $this->writeln(sprintf('Running <info>%s</info>', 'install:development'));
         $this->installDevelopment();
+
+        // Show outdated packages
+        $result = $this->taskExec('composer')->printOutput(false)->arg('outdated')->run();
+        if ($message = $result->getMessage()) {
+            $this->writeln('');
+            $this->writeln('<info>Consider updating the following packages:</info>');
+            $this->writeln($message);
+        }
+
+        $this->writeln('');
+
+        $this->yell('Done! You can now build the VM with: vagrant up');
     }
 
     /**
