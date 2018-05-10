@@ -58,7 +58,7 @@ class RoboFile extends \Robo\Tasks
      */
     public function filesPush(string $destination, $options = ['exclude' => null, 'dry-run' => true])
     {
-        return $this->rsyncPush("{$destination}:%files");
+        return $this->rsyncPush("{$destination}:%files", $options);
     }
 }
 ```

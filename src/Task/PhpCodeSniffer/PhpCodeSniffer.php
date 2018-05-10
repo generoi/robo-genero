@@ -1,6 +1,6 @@
 <?php
 
-namespace Generoi\Robo\Task;
+namespace Generoi\Robo\Task\PhpCodeSniffer;
 
 use Robo;
 use Robo\Result;

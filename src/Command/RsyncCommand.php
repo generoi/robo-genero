@@ -26,7 +26,7 @@ trait RsyncCommand
      */
     public function rsync(string $source, string $destination, $options = ['dry-run' => false, 'exclude' => null])
     {
-        $rsync = $this->taskRsyncAlias($source, $destination)
+        $rsync = $this->taskRsyncAlias()
             ->from($source)
             ->to($destination)
             ->recursive()
@@ -48,9 +48,8 @@ trait RsyncCommand
         // }
 
         if (!empty($options['dry-run'])) {
-            $this->say(sprintf('<info>%s</info>', $rsync->getCommand()));
             if ($this->confirm('Dry run does currently not work, do you wish to continue with the real command?')) {
-                return $rsync->dryRun()->run();
+                return $rsync->run();
             }
             // @see https://github.com/consolidation/Robo/issues/583
             // $dryRun = clone $rsync;

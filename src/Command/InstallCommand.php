@@ -28,7 +28,6 @@ trait InstallCommand
      */
     public function installDevelopment()
     {
-        $this->taskExec('vendor/bin/cghooks')->arg('update')->run();
         $this->taskExec('bundle')->run();
 
         $this->taskComposerInstall()
