@@ -36,11 +36,11 @@ trait SearchReplaceCommand
 
         $files = $result['files'];
         if (count($files) > 0) {
-            if (!$options['force']) {
+            if (empty($options['force'])) {
                 $options['force'] = $this->io()->confirm(sprintf('Do you want to replace all instances of "%s" with "%s" in these files?', $from, $to));
             }
 
-            if ($options['force']) {
+            if (!empty($options['force'])) {
                 $this->taskPlaceholderReplace($from)
                     ->with($to)
                     ->in($files)
