@@ -65,7 +65,6 @@ trait WpCommand
     ])
     {
         $wpcli = $this->taskWpCliStack()
-            ->siteAlias($target)
             ->stopOnFail();
 
         if (!empty($options['debug'])) {
@@ -90,6 +89,8 @@ trait WpCommand
         if (empty($targetUrl)) {
             return Result::error($wpcli, sprintf('Alias "%s" does not exist or has no url value', $target));
         }
+
+        $wpcli->siteAlias($target);
 
         if (!empty($options['exclude_tables'])) {
             $wpcli
