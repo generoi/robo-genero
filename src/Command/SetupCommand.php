@@ -68,6 +68,12 @@ trait SetupCommand
         $this->writeln(sprintf('Running <info>%s</info>', 'search:replace'));
         $this->searchReplace(null, null, $config->get('command.search.replace.options'));
 
+        // Commit search and replace changes
+        $this->taskGitStack()
+            ->add('.')
+            ->commit('initial project setup')
+            ->run();
+
         // Install development packages
         $this->writeln(sprintf('Running <info>%s</info>', 'install:development'));
         $this->installDevelopment();
