@@ -56,7 +56,7 @@ trait SetupCommand
         }
 
         // Search and replace all placeholders
-        $this->searchReplace();
+        $this->searchReplace(null, null, $config->get('command.search.replace.options'));
 
         // Install development packages
         $this->installDevelopment();
