@@ -15,9 +15,8 @@ trait BuildCommand
     public function buildProduction($options = ['npm-script' => 'build:production'])
     {
         $this->taskNpmRun()
-            ->script($options['npm-script'])
+            ->rawScript($options['npm-script'])
             ->dir($this->getThemePath())
-            ->noProgress()
             ->run();
     }
 
@@ -27,9 +26,8 @@ trait BuildCommand
     public function buildDevelopment($options = ['npm-script' => 'build'])
     {
         $this->taskNpmRun()
-            ->script($options['npm-script'])
+            ->rawScript($options['npm-script'])
             ->dir($this->getThemePath())
-            ->noProgress()
             ->run();
     }
 }

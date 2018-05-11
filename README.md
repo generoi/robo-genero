@@ -94,10 +94,10 @@ command:
   build:
     production:
       options:
-        npm-script: 'build:production'
+        npm-script: 'build:production -- --no-progress'
     development:
       options:
-        npm-script: build
+        npm-script: 'build -- --no-progress'
   setup:
     theme:
       options:

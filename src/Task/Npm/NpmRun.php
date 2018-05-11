@@ -34,6 +34,18 @@ class NpmRun extends Robo\Task\Npm\Base
     }
 
     /**
+     * Script to run supporting passthru options.
+     *
+     * @param  string  $script
+     * @return $this
+     */
+    public function rawScript($script)
+    {
+        $this->rawArg($script);
+        return $this;
+    }
+
+    /**
      * Set no progress.
      *
      * @return $this
