@@ -59,6 +59,7 @@ class Find extends BaseTask
         'node_modules',
         'vendor',
         '.cache-loader',
+        '.sass-cache',
     ];
 
     /**
