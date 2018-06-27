@@ -78,6 +78,10 @@ trait SetupCommand
         $this->writeln(sprintf('Running <info>%s</info>', 'install:development'));
         $this->installDevelopment();
 
+        // Build development artefacts
+        $this->writeln(sprintf('Running <info>%s</info>', 'build:development'));
+        $this->buildDevelopment();
+
         // Show outdated packages
         $result = $this->taskExec('composer')->printOutput(false)->arg('outdated')->run();
         if ($message = $result->getMessage()) {
