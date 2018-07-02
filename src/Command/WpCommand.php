@@ -4,6 +4,8 @@ namespace Generoi\Robo\Command;
 
 use Robo\Robo;
 use Robo\Result;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 
 trait WpCommand
 {
@@ -235,5 +237,77 @@ trait WpCommand
         if (!empty($options['gzip'])) {
             $this->taskExec('gzip')->arg($path)->run();
         }
+    }
+
+    /**
+     * Import database
+     *
+     * @param  string  $target  Site alias of the target site
+     * @param  string  $path  Path to database dump
+     * @param  array  $options
+     * @option $debug  (bool) Debug mode
+     * @return \Generoi\Robo\Command\Wp\WpCliStack
+     */
+    public function dbImport($target = null, $path = null, $options = [
+        'debug' => false,
+    ]) {
+        if (empty($target)) {
+            $target = $this->ask('Target alias');
+        }
+
+        // If no path is provided, list the best options but also allow custom
+        // paths.
+        if (empty($path)) {
+            $dumpFiles = Finder::create()->ignoreVCS(true)
+                ->in('.')
+                ->depth('== 0')
+                ->name("database.$target.*.sql*")
+                ->sortByModifiedTime();
+
+            $dumpFiles = array_values(iterator_to_array($dumpFiles));
+
+            $question = new ChoiceQuestion('Path to database dump', $dumpFiles, count($dumpFiles) - 1);
+            $defaultValidator = $question->getValidator();
+            $question->setValidator(function ($selected) use ($defaultValidator) {
+                if (file_exists($selected)) {
+                    return $selected;
+                }
+                return $defaultValidator($selected);
+            });
+
+            $path = $this->doAsk($question);
+        }
+
+        $wpcli = $this->taskWpCliStack()
+            ->stopOnFail()
+            ->siteAlias($target);
+
+        if (!file_exists($path)) {
+            return Result::error($wpcli, sprintf('File does not exist: %s', $path));
+        }
+
+        // Decompress gzipped files automatically.
+        if (preg_match('/(.*)\.gz$/', $path, $matches) === 1) {
+            $this->taskExec('gunzip')
+                ->option('force')
+                ->option('keep')
+                ->arg($path)
+                ->run();
+
+            $path = $matches[1];
+        }
+
+        if (!is_readable($path)) {
+            return Result::error($wpcli, sprintf('File is not readable: %s', $path));
+        }
+
+        if (!empty($options['debug'])) {
+            $wpcli->debug();
+        }
+
+        $wpcli
+            ->dbImportLocally($path)
+            ->cache('flush')
+            ->run();
     }
 }
