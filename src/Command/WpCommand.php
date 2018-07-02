@@ -90,6 +90,17 @@ trait WpCommand
             return Result::error($wpcli, sprintf('Alias "%s" does not exist or has no url value', $target));
         }
 
+        if (!is_array($sourceUrl)) {
+            $sourceUrl = [$sourceUrl];
+        }
+        if (!is_array($targetUrl)) {
+            $targetUrl = [$targetUrl];
+        }
+
+        if (count($sourceUrl) !== count($targetUrl)) {
+            return Result::error($wpcli, sprintf('Alias "%s" has a different URL count than "%s".', $target, $source));
+        }
+
         $wpcli->siteAlias($target);
 
         if (!empty($options['exclude_tables'])) {
@@ -99,14 +110,88 @@ trait WpCommand
                 ->excludeTables($options['exclude_tables']);
         }
 
+        // Run database sync
+        $wpcli->dbSync($source, $target)->run();
+
+        // Search replace each URL mapped by index.
+        foreach ($sourceUrl as $idx => $url) {
+            $this->dbSearchReplace($target, $url, $targetUrl[$idx], [
+                'flush' => false,
+                'debug' => $options['debug'],
+                'hostnames' => true,
+            ]);
+        }
+
+        $wpcli = $this->taskWpCliStack()
+            ->stopOnFail();
+
+        if (!empty($options['debug'])) {
+            $wpcli->debug();
+        }
+
+        // Flush the cache
+        $wpcli->cache('flush')->run();
+    }
+
+    /**
+     * Search replace strings in the database.
+     *
+     * @param  string  $target  Site alias of the target site
+     * @param  string  $search  String to search for
+     * @param  string  $replace  Replacement string
+     * @param  array  $options
+     * @option $flush  (bool) Flush the cache
+     * @option $debug  (bool) Debug mode
+     * @option $hostnames  (bool) Parse the host out of a URL and rename that as well.
+     * @return \Generoi\Robo\Command\Wp\WpCliStack
+     */
+    public function dbSearchReplace($target = null, $search = null, $replace = null, $options = [
+        'flush' => true,
+        'debug' => false,
+        'hostnames' => true,
+    ]) {
+        if (empty($target)) {
+            $target = $this->ask('Target alias');
+        }
+        if (empty($search)) {
+            $search = $this->ask('Search string');
+        }
+        if (empty($replace)) {
+            $replace = $this->ask('Replace with');
+        }
+
+        if ($search === $replace) {
+            $this->writeln(sprintf('Replacement value "%s" is identical to search value "%s". Skipping…', $replace, $search));
+            return;
+        }
+
+        $wpcli = $this->taskWpCliStack()
+            ->stopOnFail();
+
+        if (!empty($options['debug'])) {
+            $wpcli->debug();
+        }
+
         $wpcli
-            ->dbSync($source, $target)
+            ->siteAlias($target)
             ->network()
             ->skipColumns('guid')
-            ->searchReplace($sourceUrl, $targetUrl)
-            ->skipColumns('guid')
-            ->searchReplace(parse_url($sourceUrl, PHP_URL_HOST), parse_url($targetUrl, PHP_URL_HOST))
-            ->cache('flush')
-            ->run();
+            ->searchReplace($search, $replace);
+
+        $searchHost = parse_url($search, PHP_URL_HOST);
+        $replaceHost = parse_url($replace, PHP_URL_HOST);
+
+        if (!empty($options['hostnames']) && $searchHost && $replaceHost && $searchHost !== $replaceHost) {
+            $wpcli
+                ->network()
+                ->skipColumns('guid')
+                ->searchReplace($searchHost, $replaceHost);
+        }
+
+        if (!empty($options['flush'])) {
+            $wpcli->cache('flush');
+        }
+
+        $wpcli->run();
     }
 }
