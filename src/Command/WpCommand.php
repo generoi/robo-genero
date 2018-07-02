@@ -194,4 +194,46 @@ trait WpCommand
 
         $wpcli->run();
     }
+
+    /**
+     * Dump database
+     *
+     * @param  string  $target  Site alias of the target site
+     * @param  array  $options
+     * @option $gzip  (bool) Archive
+     * @option $debug  (bool) Debug mode
+     * @option $exclude_tables  (array|string) Comman separated list of tables
+     *     to exclude during dump.
+     * @return \Generoi\Robo\Command\Wp\WpCliStack
+     */
+    public function dbExport($target = null, $path = null, $options = [
+        'gzip' => false,
+        'debug' => false,
+        'exclude_tables' => null
+    ]) {
+        if (empty($target)) {
+            $target = $this->ask('Target alias');
+        }
+
+        if (empty($path)) {
+            $path = 'database.' . $target . '.' . date('Y-m-d-His') . '.sql';
+        }
+
+        $wpcli = $this->taskWpCliStack()
+            ->stopOnFail()
+            ->siteAlias($target);
+
+        if (!empty($options['debug'])) {
+            $wpcli->debug();
+        }
+        if (!empty($options['exclude_tables'])) {
+            $wpcli->excludeTables($options['exclude_tables']);
+        }
+
+        $wpcli->dbExportLocally($path)->run();
+
+        if (!empty($options['gzip'])) {
+            $this->taskExec('gzip')->arg($path)->run();
+        }
+    }
 }
