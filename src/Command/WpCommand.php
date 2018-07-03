@@ -133,7 +133,8 @@ trait WpCommand
         }
 
         $wpcli = $this->taskWpCliStack()
-            ->stopOnFail();
+            ->stopOnFail()
+            ->siteAlias($target);
 
         if (!empty($options['debug'])) {
             $wpcli->debug();
