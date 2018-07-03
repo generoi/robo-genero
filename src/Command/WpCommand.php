@@ -115,6 +115,14 @@ trait WpCommand
         // Run database sync
         $wpcli->dbSync($source, $target)->run();
 
+        // If there are multiple blogs, ensure the wp_site and wp_blogs tables
+        // are up to date otherwise --network will not run on all tables.
+        if (count($sourceUrl) > 1) {
+            foreach ($sourceUrl as $idx => $url) {
+                $this->dbRenameSite($target, $url, $targetUrl[$idx]);
+            }
+        }
+
         // Search replace each URL mapped by index.
         foreach ($sourceUrl as $idx => $url) {
             $this->dbSearchReplace($target, $url, $targetUrl[$idx], [
@@ -145,12 +153,14 @@ trait WpCommand
      * @option $flush  (bool) Flush the cache
      * @option $debug  (bool) Debug mode
      * @option $hostnames  (bool) Parse the host out of a URL and rename that as well.
+     * @option $tables (array) Tables to act on
      * @return \Generoi\Robo\Command\Wp\WpCliStack
      */
     public function dbSearchReplace($target = null, $search = null, $replace = null, $options = [
         'flush' => true,
         'debug' => false,
         'hostnames' => true,
+        'tables' => [],
     ]) {
         if (empty($target)) {
             $target = $this->ask('Target alias');
@@ -160,6 +170,9 @@ trait WpCommand
         }
         if (empty($replace)) {
             $replace = $this->ask('Replace with');
+        }
+        if (!isset($options['tables'])) {
+            $options['tables'] = [];
         }
 
         if ($search === $replace) {
@@ -178,7 +191,7 @@ trait WpCommand
             ->siteAlias($target)
             ->network()
             ->skipColumns('guid')
-            ->searchReplace($search, $replace);
+            ->searchReplace($search, $replace, $options['tables']);
 
         $searchHost = parse_url($search, PHP_URL_HOST);
         $replaceHost = parse_url($replace, PHP_URL_HOST);
@@ -187,7 +200,7 @@ trait WpCommand
             $wpcli
                 ->network()
                 ->skipColumns('guid')
-                ->searchReplace($searchHost, $replaceHost);
+                ->searchReplace($searchHost, $replaceHost, $options['tables']);
         }
 
         if (!empty($options['flush'])) {
@@ -309,5 +322,26 @@ trait WpCommand
             ->dbImportLocally($path)
             ->cache('flush')
             ->run();
+    }
+
+    /**
+     * Rename a multisite domain
+     *
+     * @param  string  $target  Site alias of the target site
+     * @param  string  $search  String to search for
+     * @param  string  $replace  Replacement string
+     * @param  array  $options
+     * @return \Generoi\Robo\Command\Wp\WpCliStack
+     */
+    public function dbRenameSite($target = null, $search = null, $replace = null, $options = [
+        'flush' => false,
+        'debug' => false,
+    ])
+    {
+        $search = parse_url($search, PHP_URL_HOST) ?? $search;
+        $replace = parse_url($replace, PHP_URL_HOST) ?? $replace;
+        return $this->dbSearchReplace($target, $search, $replace, array_merge($options, [
+            'tables' => ['wp_site', 'wp_blogs'],
+        ]));
     }
 }

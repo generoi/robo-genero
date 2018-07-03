@@ -402,12 +402,16 @@ class WpCliStack extends CommandStack
      *
      * @param  string  $search
      * @param  string  $replace
+     * @param  string[]  $tables
      * @return $this
      */
-    public function searchReplace($search, $replace)
+    public function searchReplace($search, $replace, $tables = [])
     {
         $this->argForNextCommand($search);
         $this->argForNextCommand($replace);
+        foreach ($tables as $table) {
+            $this->argForNextCommand($table);
+        }
         return $this->wp('search-replace');
     }
 
