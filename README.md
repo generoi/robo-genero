@@ -104,6 +104,8 @@ command:
         theme-repository: 'git@github.com:generoi/sage.git'
   files:
     options:
+      options:
+        chmod: 'Dug=rwx,Do=rx,Fug=rw,Fo=r'
       exclude:
         - 'gravity_forms/'
         - '*.webp'

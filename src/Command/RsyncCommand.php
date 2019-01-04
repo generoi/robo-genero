@@ -22,9 +22,10 @@ trait RsyncCommand
      * @param  array  $options
      * @option $dry-run (bool) Run a dry-run before
      * @option $exclude (array) Exclude patterns
+     * @option $options (array) Map of extra options passed straight to rsync
      * @return \Robo\Result
      */
-    public function rsync(string $source, string $destination, $options = ['dry-run' => false, 'exclude' => null])
+    public function rsync(string $source, string $destination, $options = ['dry-run' => false, 'exclude' => null, 'options' => null])
     {
         $rsync = $this->taskRsyncAlias()
             ->from($source)
@@ -37,6 +38,10 @@ trait RsyncCommand
 
         if (!empty($options['exclude'])) {
             $rsync->exclude($options['exclude']);
+        }
+
+        if (!empty($options['options'])) {
+            $rsync->options($options['options']);
         }
 
         // @todo file bug report
