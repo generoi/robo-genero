@@ -44,9 +44,9 @@ trait InstallCommand
 
         if (!file_exists('.env')) {
             $this->taskFilesystemStack()
-                ->stopOnFail()
                 ->copy('.env.example', '.env')
-                ->run();
+                ->run()
+                ->stopOnFail();
         }
     }
 }

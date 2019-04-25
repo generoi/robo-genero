@@ -66,13 +66,11 @@ trait WpCommand
         'debug' => false,
     ])
     {
-        $wpcli = $this->taskWpCliStack()
-            ->stopOnFail();
+        $wpcli = $this->taskWpCliStack();
 
         if (!empty($options['debug'])) {
             $wpcli->debug();
         }
-
 
         if (empty($source)) {
             $source = $this->ask('Source alias');
@@ -113,13 +111,13 @@ trait WpCommand
         }
 
         // Run database sync
-        $wpcli->dbSync($source, $target)->run();
+        $wpcli->dbSync($source, $target)->run()->stopOnFail();
 
         // If there are multiple blogs, ensure the wp_site and wp_blogs tables
         // are up to date otherwise --network will not run on all tables.
         if (count($sourceUrl) > 1) {
             foreach ($sourceUrl as $idx => $url) {
-                $this->dbRenameSite($target, $url, $targetUrl[$idx]);
+                $this->dbRenameSite($target, $url, $targetUrl[$idx])->stopOnFail();
             }
         }
 
@@ -129,11 +127,10 @@ trait WpCommand
                 'flush' => false,
                 'debug' => $options['debug'],
                 'hostnames' => true,
-            ]);
+            ])->stopOnFail();
         }
 
         $wpcli = $this->taskWpCliStack()
-            ->stopOnFail()
             ->siteAlias($target);
 
         if (!empty($options['debug'])) {
@@ -181,8 +178,7 @@ trait WpCommand
             return;
         }
 
-        $wpcli = $this->taskWpCliStack()
-            ->stopOnFail();
+        $wpcli = $this->taskWpCliStack();
 
         if (!empty($options['debug'])) {
             $wpcli->debug();
@@ -236,7 +232,6 @@ trait WpCommand
         }
 
         $wpcli = $this->taskWpCliStack()
-            ->stopOnFail()
             ->siteAlias($target);
 
         if (!empty($options['debug'])) {
@@ -246,7 +241,7 @@ trait WpCommand
             $wpcli->excludeTables($options['exclude_tables']);
         }
 
-        $wpcli->dbExportLocally($path)->run();
+        $wpcli->dbExportLocally($path)->run()->stopOnFail();
 
         if (!empty($options['gzip'])) {
             $this->taskExec('gzip')->arg($path)->run()->stopOnFail();
@@ -293,7 +288,6 @@ trait WpCommand
         }
 
         $wpcli = $this->taskWpCliStack()
-            ->stopOnFail()
             ->siteAlias($target);
 
         if (!file_exists($path)) {
@@ -306,7 +300,8 @@ trait WpCommand
                 ->option('force')
                 ->option('keep')
                 ->arg($path)
-                ->run();
+                ->run()
+                ->stopOnFail();
 
             $path = $matches[1];
         }
@@ -319,7 +314,7 @@ trait WpCommand
             $wpcli->debug();
         }
 
-        $wpcli
+        return $wpcli
             ->dbImportLocally($path)
             ->cache('flush')
             ->run();

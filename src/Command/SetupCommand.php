@@ -48,39 +48,40 @@ trait SetupCommand
         // Modify robo.yml
         if (!empty($machineName)) {
             $this->writeln(sprintf('Running <info>%s</info>', 'setup:yaml'));
-            $this->setupYaml($machineName);
+            $this->setupYaml($machineName)->stopOnFail();
             $config = Robo::config();
         }
 
         // Clone theme
         if (!empty($options['theme-repository'])) {
             $this->writeln(sprintf('Running <info>%s</info>', 'setup:theme'));
-            $this->setupTheme($config->get('theme_path'), $options);
+            $this->setupTheme($config->get('theme_path'), $options)->stopOnFail();
         }
 
         // Set git remote
         if (!empty($options['remote'])) {
             $this->writeln(sprintf('Running <info>%s</info>', 'setup:remote'));
-            $this->setupRemote($options['remote']);
+            $this->setupRemote($options['remote'])->stopOnFail();
         }
 
         // Search and replace all placeholders
         $this->writeln(sprintf('Running <info>%s</info>', 'search:replace'));
-        $this->searchReplace(null, null, $config->get('command.search.replace.options'));
+        $this->searchReplace(null, null, $config->get('command.search.replace.options'))->stopOnFail();
 
         // Commit search and replace changes
         $this->taskGitStack()
             ->add('.')
             ->commit('initial project setup')
-            ->run();
+            ->run()
+            ->stopOnFail();
 
         // Install development packages
         $this->writeln(sprintf('Running <info>%s</info>', 'install:development'));
-        $this->installDevelopment();
+        $this->installDevelopment()->stopOnFail();
 
         // Build development artefacts
         $this->writeln(sprintf('Running <info>%s</info>', 'build:development'));
-        $this->buildDevelopment();
+        $this->buildDevelopment()->stopOnFail();
 
         // Show outdated packages
         $result = $this->taskExec('composer')->printOutput(false)->arg('outdated')->run();
