@@ -21,13 +21,13 @@ trait TestCommand
     public function test($options = ['composer' => true, 'sniff' => true, 'theme' => true])
     {
         if ($options['composer']) {
-            $this->testComposer();
+            $this->testComposer()->stopOnFail();
         }
         if ($options['sniff']) {
-            $this->testSniff();
+            $this->testSniff()->stopOnFail();
         }
         if ($options['theme']) {
-            $this->testTheme();
+            $this->testTheme()->stopOnFail();
         }
     }
 

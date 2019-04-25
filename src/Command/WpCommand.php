@@ -141,7 +141,7 @@ trait WpCommand
         }
 
         // Flush the cache
-        $wpcli->cache('flush')->run();
+        return $wpcli->cache('flush')->run();
     }
 
     /**
@@ -208,7 +208,7 @@ trait WpCommand
             $wpcli->cache('flush');
         }
 
-        $wpcli->run();
+        return $wpcli->run();
     }
 
     /**
@@ -249,7 +249,7 @@ trait WpCommand
         $wpcli->dbExportLocally($path)->run();
 
         if (!empty($options['gzip'])) {
-            $this->taskExec('gzip')->arg($path)->run();
+            $this->taskExec('gzip')->arg($path)->run()->stopOnFail();
         }
     }
 

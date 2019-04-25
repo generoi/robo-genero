@@ -14,7 +14,7 @@ trait InstallCommand
      */
     public function installProduction()
     {
-        $this->taskComposerInstall()
+        return $this->taskComposerInstall()
             ->dir($this->getThemePath())
             ->noDev()
             ->noInteraction()
@@ -28,18 +28,25 @@ trait InstallCommand
      */
     public function installDevelopment()
     {
-        $this->taskExec('bundle')->run();
+        if (file_exists('Gemfile')) {
+            $this->taskExec('bundle')->run()->stopOnFail();
+        }
 
         $this->taskComposerInstall()
             ->dir($this->getThemePath())
-            ->run();
+            ->run()
+            ->stopOnFail();
 
         $this->taskNpmInstall()
             ->dir($this->getThemePath())
-            ->run();
+            ->run()
+            ->stopOnFail();
 
         if (!file_exists('.env')) {
-            copy('.env.example', '.env');
+            $this->taskFilesystemStack()
+                ->stopOnFail()
+                ->copy('.env.example', '.env')
+                ->run();
         }
     }
 }

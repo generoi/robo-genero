@@ -32,7 +32,8 @@ trait SearchReplaceCommand
             ->directories($options['dirs'])
             ->exclude($options['exclude'])
             ->io($this->io())
-            ->run();
+            ->run()
+            ->stopOnFail();
 
         $files = $result['files'];
         if (count($files) > 0) {
@@ -41,11 +42,13 @@ trait SearchReplaceCommand
             }
 
             if (!empty($options['force'])) {
-                $this->taskPlaceholderReplace($from)
+                $result = $this->taskPlaceholderReplace($from)
                     ->with($to)
                     ->in($files)
                     ->run();
             }
         }
+
+        return $result;
     }
 }
