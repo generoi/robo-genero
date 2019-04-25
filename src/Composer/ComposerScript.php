@@ -39,7 +39,7 @@ class ComposerScript
     {
         list($event) = $arguments;
         $command = preg_replace('/[A-Z]/', ':$1', $name);
-        return (new static($event))->robo($command);
+        $result = (new static($event))->robo($command);
     }
 
     /**
@@ -62,7 +62,7 @@ class ComposerScript
     public function validate()
     {
         if (!$this->isInteractive()) {
-            throw new Symfony\Component\Process\Exception\RuntimeException('Interactive mode is required');
+            throw new RuntimeException('Interactive mode is required');
         }
         return $this;
     }
@@ -92,6 +92,10 @@ class ComposerScript
         }
 
         $process->run();
-        return $this;
+        if (!$process->isSuccessful()) {
+            throw new RuntimeException('Error Output: '. $process->getErrorOutput(), $process->getExitCode());
+        }
+
+        return $process;
     }
 }
