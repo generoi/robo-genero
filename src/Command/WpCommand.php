@@ -66,7 +66,8 @@ trait WpCommand
         'debug' => false,
     ])
     {
-        $wpcli = $this->taskWpCliStack();
+        $wpcli = $this->taskWpCliStack()
+            ->quiet();
 
         if (!empty($options['debug'])) {
             $wpcli->debug();
@@ -131,7 +132,8 @@ trait WpCommand
         }
 
         $wpcli = $this->taskWpCliStack()
-            ->siteAlias($target);
+            ->siteAlias($target)
+            ->quiet();
 
         if (!empty($options['debug'])) {
             $wpcli->debug();
@@ -178,7 +180,8 @@ trait WpCommand
             return;
         }
 
-        $wpcli = $this->taskWpCliStack();
+        $wpcli = $this->taskWpCliStack()
+            ->quiet();
 
         if (!empty($options['debug'])) {
             $wpcli->debug();
@@ -232,6 +235,7 @@ trait WpCommand
         }
 
         $wpcli = $this->taskWpCliStack()
+            ->quiet()
             ->siteAlias($target);
 
         if (!empty($options['debug'])) {
@@ -288,6 +292,7 @@ trait WpCommand
         }
 
         $wpcli = $this->taskWpCliStack()
+            ->quiet()
             ->siteAlias($target);
 
         if (!file_exists($path)) {
