@@ -71,7 +71,7 @@ trait SetupCommand
         // Commit search and replace changes
         $this->taskGitStack()
             ->add('.')
-            ->commit('initial project setup')
+            ->commit('initial project setup', '--no-verify')
             ->run()
             ->stopOnFail();
 
