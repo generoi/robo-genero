@@ -77,7 +77,7 @@ trait SetupCommand
 
         // Install development packages
         $this->writeln(sprintf('Running <info>%s</info>', 'install:development'));
-        $this->installDevelopment()->stopOnFail();
+        $this->installDevelopment();
 
         // Build development artefacts
         $this->writeln(sprintf('Running <info>%s</info>', 'build:development'));
