@@ -84,6 +84,9 @@ trait WpCommand
         $sourceUrl = $config->get("env.$source.url");
         $targetUrl = $config->get("env.$target.url");
 
+        $sourceExecutable = $config->get("env.$source.wpcli");
+        $targetExecutable = $config->get("env.$target.wpcli");
+
         if (empty($sourceUrl)) {
             return Result::error($wpcli, sprintf('Alias "%s" does not exist or has no url value', $source));
         }
@@ -100,6 +103,14 @@ trait WpCommand
 
         if (count($sourceUrl) !== count($targetUrl)) {
             return Result::error($wpcli, sprintf('Alias "%s" has a different URL count than "%s".', $target, $source));
+        }
+
+        if (!empty($sourceExecutable)) {
+            $wpcli->setAliasExecutable($source, $sourceExecutable);
+        }
+
+        if (!empty($targetExecutable)) {
+            $wpcli->setAliasExecutable($target, $targetExecutable);
         }
 
         $wpcli->siteAlias($target);
@@ -134,6 +145,10 @@ trait WpCommand
         $wpcli = $this->taskWpCliStack()
             ->siteAlias($target)
             ->quiet();
+
+        if ($executable = Robo::config()->get("env.$target.wpcli")) {
+            $wpcli->executable($executable);
+        }
 
         if (!empty($options['debug'])) {
             $wpcli->debug();
@@ -182,6 +197,10 @@ trait WpCommand
 
         $wpcli = $this->taskWpCliStack()
             ->quiet();
+
+        if ($executable = Robo::config()->get("env.$target.wpcli")) {
+            $wpcli->executable($executable);
+        }
 
         if (!empty($options['debug'])) {
             $wpcli->debug();
@@ -237,6 +256,10 @@ trait WpCommand
         $wpcli = $this->taskWpCliStack()
             ->quiet()
             ->siteAlias($target);
+
+        if ($executable = Robo::config()->get("env.$target.wpcli")) {
+            $wpcli->executable($executable);
+        }
 
         if (!empty($options['debug'])) {
             $wpcli->debug();
@@ -294,6 +317,11 @@ trait WpCommand
         $wpcli = $this->taskWpCliStack()
             ->quiet()
             ->siteAlias($target);
+
+
+        if ($executable = Robo::config()->get("env.$target.wpcli")) {
+            $wpcli->executable($executable);
+        }
 
         if (!file_exists($path)) {
             return Result::error($wpcli, sprintf('File does not exist: %s', $path));

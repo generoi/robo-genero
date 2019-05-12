@@ -35,21 +35,45 @@ class WpCliStack extends CommandStack
      */
     protected $siteAlias;
 
+    /**
+     * Alias specific wp cli executable paths
+     *
+     * @var arary
+     */
+    protected $aliasExecutable = [];
+
     public function __construct($wpCliPath = 'wp')
     {
-        $this->executable = $wpCliPath;
+        $this->executable($wpCliPath);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function executable($executable)
+    {
+        $this->executable = $executable;
+        $this->defaultExecutable = $executable;
+        return $this;
     }
 
     /**
      * Set which alias to use for the command.
      *
      * @param  string  $alias
+     * @param  string  $executable
      * @return $this
      */
-    public function siteAlias($alias)
+    public function siteAlias($alias, $executable = null)
     {
         $this->siteAlias = $alias;
+        $this->executable = $executable ?: $this->aliasExecutable[$alias] ?? $this->defaultExecutable;
         return $this;
+    }
+
+    public function setAliasExecutable($alias, $executable = null)
+    {
+        $this->aliasExecutable[$alias] = $executable ?? $this->defaultExecutable;
     }
 
     /**
@@ -370,7 +394,9 @@ class WpCliStack extends CommandStack
             $this->argForNextCommand('-');
             return $this->dbImport('');
         }
-        return $this->exec("cat $path | wp " . $this->injectArguments('db import') . ' -');
+        $stack = new \Robo\Task\Base\ExecStack();
+        $stack->exec("cat $path | {$this->executable} " . $this->injectArguments('db import') . ' -');
+        return $this->exec($stack);
     }
 
     /**
@@ -440,7 +466,7 @@ class WpCliStack extends CommandStack
             $command = implode(' ', array_filter($command));
         }
 
-        return $this->exec('wp ' . $this->injectArguments($command));
+        return $this->exec($this->injectArguments($command));
     }
 
     /**

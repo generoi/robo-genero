@@ -8,7 +8,7 @@ trait loadTasks
      * @param string $wpCliPath
      * @return \Generoi\Robo\Task\Wp\WpCliStack
      */
-    protected function taskWpCliStack($wpCliPath = null)
+    protected function taskWpCliStack($wpCliPath = 'wp')
     {
         return $this->task(WpCliStack::class, $wpCliPath);
     }
