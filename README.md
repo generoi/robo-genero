@@ -72,20 +72,28 @@ machine_name: <example-project>
 theme_path: 'web/app/themes/${machine_name}'
 organization: generoi
 env:
-  development:
+  '@docker':
+    host: '${machine_name}.ddev.local'
+    wpcli: 'ddev exec wp-cli'
+    path: '/var/www/html'
+    url: 'http://${machine_name}.ddev.local'
+  '@dev':
     host: '${machine_name}.test'
     user: vagrant
     path: '/var/www/wordpress'
-  staging:
+    url: 'http://${machine_name}.test'
+  '@staging':
     host: staging.example.org
     user: deploy
     path: '/var/www/staging/${machine_name}/deploy/current'
     ssh: 'ssh -o ForwardAgent=yes'
-  production:
+    url: 'http://staging.example.org'
+  '@production':
     host: production.example.org
     user: deploy
     path: '/home/www/${machine_name}/deploy/current'
     ssh: 'ssh -o ForwardAgent=yes -o "ProxyCommand ssh deploy@staging.example.org nc %h %p 2> /dev/null"'
+    url: 'https://production.example.org'
 
 placeholders:
   '%files': web/app/uploads/
@@ -94,14 +102,45 @@ command:
   build:
     production:
       options:
-        npm-script: 'build:production -- --no-progress'
+        npm-script: 'build:production'
     development:
       options:
-        npm-script: 'build -- --no-progress'
+        npm-script: 'build'
   setup:
     theme:
       options:
         theme-repository: 'git@github.com:generoi/sage.git'
+  search:
+    replace:
+      options:
+        dirs:
+          - config
+          - web/app/themes
+          - web/app/mu-plugins
+        exclude:
+          - robo.yml
+          - dist
+  db:
+    options:
+      exclude_tables:
+        - wp_gf_entry
+        - wp_gf_entry_meta
+        - wp_gf_entry_notes
+        - wp_gf_incomplete_submissions
+        - wp_rg_incomplete_submissions
+        - wp_rg_lead
+        - wp_rg_lead_detail
+        - wp_rg_lead_detail_long
+        - wp_rg_lead_meta
+        - wp_rg_lead_notes
+        - wp_stream
+        - wp_stream_meta
+    pull:
+      options:
+        target: '@dev'
+    push:
+      options:
+        source: '@dev'
   files:
     options:
       options:
