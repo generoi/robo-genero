@@ -80,6 +80,10 @@ trait WpCommand
             $target = $this->ask('Target alias');
         }
 
+        if (strpos($target, 'prod') !== false && !$this->confirm(sprintf('This will replace the "%s" datebase, are you sure you want to continue?', $target))) {
+            return Result::error($wpcli, 'Cancelled');
+        }
+
         $config = Robo::config();
         $sourceUrl = $config->get("env.$source.url");
         $targetUrl = $config->get("env.$target.url");
@@ -176,7 +180,8 @@ trait WpCommand
         'debug' => false,
         'hostnames' => true,
         'tables' => [],
-    ]) {
+    ])
+    {
         if (empty($target)) {
             $target = $this->ask('Target alias');
         }
@@ -244,7 +249,8 @@ trait WpCommand
         'gzip' => false,
         'debug' => false,
         'exclude_tables' => null
-    ]) {
+    ])
+    {
         if (empty($target)) {
             $target = $this->ask('Target alias');
         }
@@ -286,7 +292,8 @@ trait WpCommand
      */
     public function dbImport($target = null, $path = null, $options = [
         'debug' => false,
-    ]) {
+    ])
+    {
         if (empty($target)) {
             $target = $this->ask('Target alias');
         }
@@ -318,6 +325,9 @@ trait WpCommand
             ->quiet()
             ->siteAlias($target);
 
+        if (strpos($target, 'prod') !== false && !$this->confirm(sprintf('This will make changes on the "%s" datebase, are you sure you want to continue?', $target))) {
+            return Result::error($wpcli, 'Cancelled');
+        }
 
         if ($executable = Robo::config()->get("env.$target.wpcli")) {
             $wpcli->executable($executable);

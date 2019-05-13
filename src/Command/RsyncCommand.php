@@ -44,6 +44,10 @@ trait RsyncCommand
             $rsync->options($options['options']);
         }
 
+        if (strpos($target, 'prod') !== false && !$this->confirm(sprintf('This will replace files on "%s", are you sure you want to continue?', $target))) {
+            return Result::error($rsync, 'Cancelled');
+        }
+
         // @todo file bug report
         // if ($exclude = Robo::Config()->get('task.Remote.RsyncAlias.settings.exclude')) {
         //     if (is_array($exclude)) {
