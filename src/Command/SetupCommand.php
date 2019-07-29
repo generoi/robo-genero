@@ -21,10 +21,12 @@ trait SetupCommand
      * @param  array  $options
      * @option $remote  The remote git repository
      * @option $theme-repository  The git repository when creating the theme
+     * @option $no-commit  Skip initial project commit
      */
     public function setup($machineName = null, $options = [
         'remote' => null,
         'theme-repository' => null,
+        'no-commit' => false,
     ])
     {
         $config = Robo::config();
@@ -69,11 +71,13 @@ trait SetupCommand
         $this->searchReplace(null, null, $config->get('command.search.replace.options'))->stopOnFail();
 
         // Commit search and replace changes
-        $this->taskGitStack()
-            ->add('.')
-            ->commit('initial project setup', '--no-verify')
-            ->run()
-            ->stopOnFail();
+        if (!empty($options['no-commit'])) {
+            $this->taskGitStack()
+                ->add('.')
+                ->commit('initial project setup', '--no-verify')
+                ->run()
+                ->stopOnFail();
+        }
 
         // Install development packages
         $this->writeln(sprintf('Running <info>%s</info>', 'install:development'));
