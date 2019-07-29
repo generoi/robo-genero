@@ -383,4 +383,74 @@ trait WpCommand
             'tables' => ['wp_site', 'wp_blogs'],
         ]));
     }
+
+    /**
+     * Install one or many language packs.
+     *
+     * @param  string  $target  Site alias of the target site
+     * @param  string  $languages  Language to install
+     * @param  array  $options
+     * @return \Generoi\Robo\Command\Wp\WpCliStack
+     */
+    public function languageInstall($target = null, $languages = null, $options = [
+        'debug' => false,
+        'languages' => null,
+    ])
+    {
+        if (empty($target)) {
+            $target = $this->ask('Target alias');
+        }
+
+        if (empty($languages)) {
+            $languages = $options['languages'];
+        }
+        if (empty($languages)) {
+            $languages = $this->ask('Comma separated list of languages');
+        }
+        if (is_string($languages)) {
+            $languages = array_map('trim', explode(',', $languages));
+        }
+
+        $wpcli = $this->taskWpCliStack()
+            ->quiet()
+            ->siteAlias($target);
+
+        if (!empty($options['debug'])) {
+            $wpcli->debug();
+        }
+
+        return $wpcli
+            ->languageInstallCore($languages)
+            ->languageInstallPlugin('--all', $languages)
+            ->run();
+    }
+
+    /**
+     * Update all language packs.
+     *
+     * @param  string  $target  Site alias of the target site
+     * @param  array  $options
+     * @return \Generoi\Robo\Command\Wp\WpCliStack
+     */
+    public function languageUpdate($target = null, $options = [
+        'debug' => false,
+    ])
+    {
+        if (empty($target)) {
+            $target = $this->ask('Target alias');
+        }
+
+        $wpcli = $this->taskWpCliStack()
+            ->quiet()
+            ->siteAlias($target);
+
+        if (!empty($options['debug'])) {
+            $wpcli->debug();
+        }
+
+        return $wpcli
+            ->languageUpdateCore()
+            ->languageUpdatePlugin('--all')
+            ->run();
+    }
 }

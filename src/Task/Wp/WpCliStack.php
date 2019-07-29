@@ -454,6 +454,54 @@ class WpCliStack extends CommandStack
     }
 
     /**
+     * Executes `wp language core install`
+     *
+     * @param  string  $languages  Space separated list of languages to install
+     * @return $this
+     */
+    public function languageInstallCore($languages)
+    {
+        $this->argsForNextCommand($languages);
+        return $this->wp('language core install');
+    }
+
+    /**
+     * Executes `wp language plugin install`
+     *
+     * @param  string  $plugin  Plugin name (--all for all)
+     * @param  string  $languages  Space separated list of languages to install
+     * @return $this
+     */
+    public function languageInstallPlugin($plugin, $languages)
+    {
+        $this->argForNextCommand($plugin);
+        $this->argsForNextCommand($languages);
+        return $this->wp('language plugin install');
+    }
+
+    /**
+     * Executes `wp language core update`
+     *
+     * @return $this
+     */
+    public function languageUpdateCore()
+    {
+        return $this->wp('language core update');
+    }
+
+    /**
+     * Executes `wp language plugin update`
+     *
+     * @param  string  $plugin  Plugin name (--all for all)
+     * @return $this
+     */
+    public function languageUpdatePlugin($plugin)
+    {
+        $this->argForNextCommand($plugin);
+        return $this->wp('language plugin update');
+    }
+
+    /**
      * Runs the given wp cli command.
      *
      * @param string $command
