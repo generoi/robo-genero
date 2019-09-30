@@ -131,10 +131,8 @@ trait WpCommand
 
         // If there are multiple blogs, ensure the wp_site and wp_blogs tables
         // are up to date otherwise --network will not run on all tables.
-        if (count($sourceUrl) > 1) {
-            foreach ($sourceUrl as $idx => $url) {
-                $this->dbRenameSite($target, $url, $targetUrl[$idx])->stopOnFail();
-            }
+        foreach ($sourceUrl as $idx => $url) {
+            $this->dbRenameSite($target, $url, $targetUrl[$idx])->stopOnFail();
         }
 
         // Search replace each URL mapped by index.
