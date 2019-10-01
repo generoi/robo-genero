@@ -44,7 +44,7 @@ trait RsyncCommand
             $rsync->options($options['options']);
         }
 
-        if (strpos($target, 'prod') !== false && !$this->confirm(sprintf('This will replace files on "%s", are you sure you want to continue?', $target))) {
+        if (strpos($destination, 'prod') !== false && !$this->confirm(sprintf('This will replace files on "%s", are you sure you want to continue?', $destination))) {
             return Result::error($rsync, 'Cancelled');
         }
 
