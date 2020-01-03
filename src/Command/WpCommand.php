@@ -17,6 +17,7 @@ trait WpCommand
      * @option $exclude_tables  (array|string) Comman separated list of tables
      *     to exclude during dump.
      * @option $target  (string) Site alias of the target site
+     * @option $multisite  (bool) Multisite
      * @option $debug  (bool) Debug mode
      * @return \Generoi\Robo\Command\Wp\WpCliStack
      */
@@ -24,6 +25,7 @@ trait WpCommand
         'exclude_tables' => null,
         'target' => '@dev',
         'debug' => false,
+        'multisite' => null,
     ])
     {
         return $this->dbSync($source, $options['target'], $options);
@@ -37,12 +39,14 @@ trait WpCommand
      * @option $exclude_tables  (array|string) Comman separated list of tables
      *     to exclude during dump.
      * @option $target  (string) Site alias of the source site
+     * @option $multisite  (bool) Multisite
      * @option $debug  (bool) Debug mode
      * @return \Generoi\Robo\Command\Wp\WpCliStack
      */
     public function dbPush($target = null, $options = [
         'exclude_tables' => null,
         'source' => '@dev',
+        'multisite' => null,
         'debug' => false,
     ])
     {
@@ -58,16 +62,22 @@ trait WpCommand
      * @param  array  $options
      * @option $exclude_tables  (array|string) Comman separated list of tables
      *     to exclude during dump.
+     * @option $multisite  (bool) Multisite
      * @option $debug  (bool) Debug mode
      * @return \Generoi\Robo\Command\Wp\WpCliStack
      */
     public function dbSync($source = null, $target = null, $options = [
         'exclude_tables' => null,
+        'multisite' => null,
         'debug' => false,
     ])
     {
         $wpcli = $this->taskWpCliStack()
             ->quiet();
+
+        if (is_null($options['multisite'])) {
+          $options['multisite'] = Robo::config()->get('multisite');
+        }
 
         if (!empty($options['debug'])) {
             $wpcli->debug();
@@ -131,8 +141,10 @@ trait WpCommand
 
         // If there are multiple blogs, ensure the wp_site and wp_blogs tables
         // are up to date otherwise --network will not run on all tables.
-        foreach ($sourceUrl as $idx => $url) {
-            $this->dbRenameSite($target, $url, $targetUrl[$idx])->stopOnFail();
+        if (!empty($options['multisite'])) {
+            foreach ($sourceUrl as $idx => $url) {
+                $this->dbRenameSite($target, $url, $targetUrl[$idx])->stopOnFail();
+            }
         }
 
         // Search replace each URL mapped by index.
