@@ -21,11 +21,13 @@ trait SetupCommand
      * @param  array  $options
      * @option $remote  The remote git repository
      * @option $theme-repository  The git repository when creating the theme
+     * @option $theme-branch  The git repository branch for the theme
      * @option $no-commit  Skip initial project commit
      */
     public function setup($machineName = null, $options = [
         'remote' => null,
         'theme-repository' => null,
+        'theme-branch' => null,
         'no-commit' => false,
     ])
     {
@@ -39,6 +41,9 @@ trait SetupCommand
         }
         if (empty($options['theme-repository'])) {
             $options['theme-repository'] = $this->askDefault('Git repository to clone theme from', $config->get('command.setup.theme.options.theme-repository'));
+        }
+        if (empty($options['theme-branch'])) {
+            $options['theme-branch'] = $this->askDefault('Git repository branch', $config->get('command.setup.theme.options.theme-branch'));
         }
 
         $this->writeln('');
@@ -125,12 +130,16 @@ trait SetupCommand
      * @param  string  $path
      * @param  array  $options
      * @option $theme-repository Remote repository to use when cloning a theme
+     * @option $theme-branch  The git repository branch for the theme
      * @return \Robo\Result
      */
-    public function setupTheme($path, $options = ['theme-repository' => null])
-    {
+    public function setupTheme($path, $options = [
+      'theme-repository' => null,
+      'theme-branch' => null,
+    ]) {
         return $this->taskGitClone($options['theme-repository'])
             ->path($path)
+            ->branch($options['theme-branch'])
             ->depth(1)
             ->deleteGit()
             ->run();

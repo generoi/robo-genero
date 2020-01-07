@@ -66,6 +66,18 @@ class GitClone extends Base
     }
 
     /**
+     * Set the clone branch.
+     *
+     * @param  string  $branch
+     * @return $this
+     */
+    public function branch(string $branch)
+    {
+        $this->option('branch', $branch);
+        return $this;
+    }
+
+    /**
      * Delete .git/ folder
      *
      * @param  bool  $delete
