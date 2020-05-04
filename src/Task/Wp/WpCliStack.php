@@ -166,7 +166,7 @@ class WpCliStack extends CommandStack
      */
     public function skipThemes($themes = [])
     {
-        if (!is_array($theme)) {
+        if (!is_array($themes)) {
             $themes = [$themes];
         }
         $this->argForNextCommand('--skip-themes' . $this->toCommaList($themes, true));

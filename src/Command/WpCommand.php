@@ -160,8 +160,8 @@ trait WpCommand
             ->siteAlias($target)
             ->quiet();
 
-        if ($executable = Robo::config()->get("env.$target.wpcli")) {
-            $wpcli->executable($executable);
+        if (!empty($targetExecutable)) {
+            $wpcli->executable($targetExecutable);
         }
 
         if (!empty($options['debug'])) {
