@@ -66,6 +66,9 @@ class WpCliStack extends CommandStack
      */
     public function siteAlias($alias, $executable = null)
     {
+        if ($alias === 'self') {
+            $alias = null;
+        }
         $this->siteAlias = $alias;
         $this->executable = $executable ?: $this->aliasExecutable[$alias] ?? $this->defaultExecutable;
         return $this;
