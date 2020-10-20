@@ -6,7 +6,8 @@ use Generoi\Robo\Common\ThemeTrait;
 
 trait loadCommands
 {
-    use RsyncCommand,
+    use ConfigCommand,
+        RsyncCommand,
         SetupCommand,
         SearchReplaceCommand,
         TestCommand,
