@@ -2,7 +2,6 @@
 
 namespace Generoi\Robo\Command;
 
-use Robo\Result;
 use Generoi\Robo\Common\AliasTrait;
 use Robo\Contract\TaskInterface;
 use Robo\Exception\AbortTasksException;

@@ -43,13 +43,13 @@ trait SetupCommand
         if (empty($machineName)) {
             $machineName = $this->askDefault('Project name (machine name)', $config->get('machine_name'));
         }
-        if (empty($options['remote'])) {
+        if (!isset($options['remote'])) {
             $options['remote'] = $this->askDefault('Remote Git repository', "git@github.com:{$config->get('organization')}/{$machineName}.git");
         }
-        if (empty($options['theme-repository'])) {
+        if (!isset($options['theme-repository'])) {
             $options['theme-repository'] = $this->askDefault('Git repository to clone theme from', $config->get('command.setup.theme.options.theme-repository'));
         }
-        if (empty($options['theme-branch'])) {
+        if (!isset($options['theme-branch'])) {
             $options['theme-branch'] = $this->askDefault('Git repository branch', $config->get('command.setup.theme.options.theme-branch'));
         }
 
