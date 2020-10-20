@@ -2,32 +2,32 @@
 
 namespace Generoi\Robo\Command;
 
-use Robo\Robo;
 use Generoi\Robo\Common\ThemeTrait;
+use Robo\Contract\TaskInterface;
 
 trait BuildCommand
 {
     use ThemeTrait;
 
     /**
-     * Build production artefacts.
+     * Build production artifacts.
      */
-    public function buildProduction($options = ['npm-script' => 'build:production'])
-    {
+    public function buildProduction(array $options = [
+        'npm-script' => 'build:production'
+    ]): TaskInterface {
         return $this->taskNpmRun()
             ->rawScript($options['npm-script'])
-            ->dir($this->getThemePath())
-            ->run();
+            ->dir($this->getThemePath());
     }
 
     /**
-     * Build development artefacts.
+     * Build development artifacts.
      */
-    public function buildDevelopment($options = ['npm-script' => 'build'])
-    {
+    public function buildDevelopment(array $options = [
+        'npm-script' => 'build'
+    ]): TaskInterface {
         return $this->taskNpmRun()
             ->rawScript($options['npm-script'])
-            ->dir($this->getThemePath())
-            ->run();
+            ->dir($this->getThemePath());
     }
 }

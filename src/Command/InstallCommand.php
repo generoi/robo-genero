@@ -2,8 +2,8 @@
 
 namespace Generoi\Robo\Command;
 
-use Robo\Robo;
 use Generoi\Robo\Common\ThemeTrait;
+use Robo\Contract\TaskInterface;
 
 trait InstallCommand
 {
@@ -12,41 +12,37 @@ trait InstallCommand
     /**
      * Install production packages.
      */
-    public function installProduction()
+    public function installProduction(): TaskInterface
     {
         return $this->taskComposerInstall()
             ->dir($this->getThemePath())
             ->noDev()
             ->noInteraction()
             ->optimizeAutoloader()
-            ->option('quiet')
-            ->run();
+            ->option('quiet');
     }
 
     /**
      * Install development packages.
      */
-    public function installDevelopment()
+    public function installDevelopment(): TaskInterface
     {
+        $tasks = $this->collectionBuilder();
         if (file_exists('Gemfile')) {
-            $this->taskExec('bundle')->run()->stopOnFail();
+            $tasks->taskExec('bundle');
         }
 
-        $this->taskComposerInstall()
-            ->dir($this->getThemePath())
-            ->run()
-            ->stopOnFail();
+        $tasks->taskComposerInstall()
+            ->dir($this->getThemePath());
 
-        $this->taskNpmInstall()
-            ->dir($this->getThemePath())
-            ->run()
-            ->stopOnFail();
+        $tasks->taskNpmInstall()
+            ->dir($this->getThemePath());
 
         if (!file_exists('.env')) {
-            $this->taskFilesystemStack()
-                ->copy('.env.example', '.env')
-                ->run()
-                ->stopOnFail();
+            $tasks->taskFilesystemStack()
+                ->copy('.env.example', '.env');
         }
+
+        return $tasks;
     }
 }

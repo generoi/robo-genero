@@ -2,6 +2,7 @@
 
 namespace Generoi\Robo\Command;
 
+use Robo\Contract\TaskInterface;
 use Robo\Robo;
 
 trait SearchReplaceCommand
@@ -19,7 +20,7 @@ trait SearchReplaceCommand
         'force' => false,
         'dirs' => [],
         'exclude' => [],
-    ])
+    ]): TaskInterface
     {
         if (empty($from)) {
             $from = $this->askDefault('Search placeholder to replace', '<example-project>');
@@ -27,6 +28,8 @@ trait SearchReplaceCommand
         if (empty($to)) {
             $to = $this->askDefault('Replace with', Robo::config()->get('machine_name'));
         }
+
+        $tasks = $this->collectionBuilder();
 
         $result = $this->taskPlaceholderFind($from, $options)
             ->directories($options['dirs'])
@@ -42,13 +45,14 @@ trait SearchReplaceCommand
             }
 
             if (!empty($options['force'])) {
-                $result = $this->taskPlaceholderReplace($from)
-                    ->with($to)
-                    ->in($files)
-                    ->run();
+                $tasks->addTask(
+                    $this->taskPlaceholderReplace($from)
+                        ->with($to)
+                        ->in($files)
+                );
             }
         }
 
-        return $result;
+        return $tasks;
     }
 }

@@ -5,6 +5,7 @@ namespace Generoi\Robo\Command;
 use Robo\Robo;
 use Robo\Result;
 use Generoi\Robo\Common\ThemeTrait;
+use Robo\Contract\TaskInterface;
 
 trait TestCommand
 {
@@ -18,17 +19,24 @@ trait TestCommand
      * @option $sniff (bool)
      * @option $theme (bool)
      */
-    public function test($options = ['composer' => true, 'sniff' => true, 'theme' => true])
+    public function test(
+        array $options = ['composer' => true, 'sniff' => true, 'theme' => true]
+    ): TaskInterface
     {
+        /** @var \Robo\Collection\CollectionBuilder $tasks */
+        $tasks = $this->collectionBuilder();
         if ($options['composer']) {
-            $this->testComposer()->stopOnFail();
+            $tasks->addTask($this->testComposer());
         }
         if ($options['sniff']) {
-            $this->testSniff()->stopOnFail();
+            $tasks->addCode(function () {
+                return $this->testSniff();
+            });
         }
         if ($options['theme']) {
-            $this->testTheme()->stopOnFail();
+            $tasks->addTask($this->testTheme());
         }
+        return $tasks;
     }
 
     /**
@@ -37,22 +45,24 @@ trait TestCommand
      * @param  string  $file  The path to sniff
      * @param  array  $options  Options
      * @option $autofix (bool) Automatically fix all problems
+     *
+     * @todo return task interface instead.
      */
-    public function testSniff($file = '', $options = [
+    public function testSniff(string $file = '', array $options = [
         'autofix' => false,
-    ])
+    ]): Result
     {
         $result = $this->taskPhpCodeSniffer($file)->run();
         if (!$result->wasSuccessful() && !$options['autofix']) {
             $options['autofix'] = $this->confirm('Would you like to run phpcbf to fix the reported errors?');
         }
         if ($options['autofix']) {
-            $task = $this->taskPhpCodeBeautifier($file);
-            $result = $task->run();
+            $subTask = $this->taskPhpCodeBeautifier($file);
+            $result = $subTask->run();
 
             // PHPCBF used 1 as successful (sigh).
             if ($result->getExitCode() === Result::EXITCODE_ERROR) {
-                return Result::success($task, $result->getOutputData());
+                return Result::success($subTask, $result->getOutputData());
             }
             return $result;
         }
@@ -65,9 +75,11 @@ trait TestCommand
      * @param  array  $options  Options
      * @option $command (string) Npm command to run
      */
-    public function testTheme($options = ['command' => 'test'])
+    public function testTheme(array $options = ['command' => 'test']): TaskInterface
     {
-        return $this->taskNpmRun()->script($options['command'])->dir($this->getThemePath())->run();
+        return $this->taskNpmRun()
+            ->script($options['command'])
+            ->dir($this->getThemePath());
     }
 
     /**
@@ -76,12 +88,12 @@ trait TestCommand
      * @param  array  $options  Options
      * @option $noCheckAll (bool) Skip some checks
      */
-    public function testComposer($options = ['noCheckAll' => true])
+    public function testComposer(array $options = ['noCheckAll' => true]): TaskInterface
     {
         $task = $this->taskComposerValidate();
         if ($options['noCheckAll']) {
             $task->noCheckAll();
         }
-        return $task->run();
+        return $task;
     }
 }

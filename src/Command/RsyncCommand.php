@@ -2,8 +2,10 @@
 
 namespace Generoi\Robo\Command;
 
-use Robo\Robo;
+use Robo\Result;
 use Generoi\Robo\Common\AliasTrait;
+use Robo\Contract\TaskInterface;
+use Robo\Exception\AbortTasksException;
 
 trait RsyncCommand
 {
@@ -23,10 +25,12 @@ trait RsyncCommand
      * @option $dry-run (bool) Run a dry-run before
      * @option $exclude (array) Exclude patterns
      * @option $options (array) Map of extra options passed straight to rsync
-     * @return \Robo\Result
      */
-    public function rsync(string $source, string $destination, $options = ['dry-run' => false, 'exclude' => null, 'options' => null])
-    {
+    public function rsync(
+        string $source,
+        string $destination,
+        array $options = ['dry-run' => false, 'exclude' => null, 'options' => null]
+    ): TaskInterface {
         $rsync = $this->taskRsyncAlias()
             ->from($source)
             ->to($destination)
@@ -45,7 +49,7 @@ trait RsyncCommand
         }
 
         if (strpos($destination, 'prod') !== false && !$this->confirm(sprintf('This will replace files on "%s", are you sure you want to continue?', $destination))) {
-            return Result::error($rsync, 'Cancelled');
+            throw new AbortTasksException('Cancelled');
         }
 
         // @todo file bug report
@@ -58,8 +62,10 @@ trait RsyncCommand
 
         if (!empty($options['dry-run'])) {
             if ($this->confirm('Dry run does currently not work, do you wish to continue with the real command?')) {
-                return $rsync->run();
+                return $rsync;
             }
+            return $this->collectionBuilder();
+            // return Result::success($rsync, 'Skipping dry run');
             // @see https://github.com/consolidation/Robo/issues/583
             // $dryRun = clone $rsync;
             // $result = $dryRun->dryRun()->run();
@@ -69,9 +75,9 @@ trait RsyncCommand
             // } else {
             //     return $result;
             // }
-        } else {
-            return $rsync->run();
         }
+
+        return $rsync;
     }
 
     /**
@@ -81,9 +87,8 @@ trait RsyncCommand
      *     `@production:%files`
      * @param  array  $options
      * @option $dry-run (bool) Run a dry-run before
-     * @return \Robo\Result
      */
-    public function rsyncPull(string $source, $options = ['dry-run' => true])
+    public function rsyncPull(string $source, array $options = ['dry-run' => true]): TaskInterface
     {
         $config = $this->parseAlias($source);
         $destination = 'self';
@@ -101,9 +106,8 @@ trait RsyncCommand
      *     string `@production:%files`
      * @param  array  $options
      * @option $dry-run (bool) Run a dry-run before
-     * @return \Robo\Result
      */
-    public function rsyncPush(string $destination, $options = ['dry-run' => true])
+    public function rsyncPush(string $destination, array $options = ['dry-run' => true]): TaskInterface
     {
         $config = $this->parseAlias($destination);
         $source = 'self';
