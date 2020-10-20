@@ -123,7 +123,7 @@ class Yaml extends BaseTask
             if ($hasValue) {
                 $this->changes++;
 
-                $this->data->delete($key);
+                $this->data->remove($key);
                 $this->printTaskSuccess("{key} deleted", ['key' => $key]);
             } else {
                 $this->printTaskInfo("{key} unchanged", ['key' => $key]);
