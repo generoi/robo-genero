@@ -6,6 +6,7 @@ trait loadTasks
 {
     // Sub tasks
     use Git\loadTasks;
+    use GitHub\loadTasks;
     use Npm\loadTasks;
     use PhpCodeSniffer\loadTasks;
     use Placeholder\loadTasks;
