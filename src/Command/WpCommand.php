@@ -403,7 +403,7 @@ trait WpCommand
      * @param  array  $options
      */
     public function dbRenameSite($target = null, $search = null, $replace = null, $options = [
-        'flush' => false,
+        'flush' => true,
         'debug' => false,
     ]): TaskInterface
     {
