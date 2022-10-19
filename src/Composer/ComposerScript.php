@@ -51,8 +51,10 @@ class ComposerScript
     public function robo($command)
     {
         $robo = getcwd() . '/vendor/bin/robo';
-        $command = explode(' ', $command);
-        return $this->run(new Process(['php', $robo, ...$command]));
+        $commands = explode(' ', $command);
+        array_unshift($commands, 'php', $robo)
+
+        return $this->run(new Process($commands));
     }
 
     /**
