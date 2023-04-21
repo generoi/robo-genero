@@ -41,6 +41,8 @@ class WpCliStack extends CommandStack
      * @var arary
      */
     protected $aliasExecutable = [];
+    
+    protected $defaultExecutable;
 
     public function __construct($wpCliPath = 'wp')
     {
