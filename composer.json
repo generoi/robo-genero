@@ -28,7 +28,7 @@
         "symfony/process": "^5",
         "symfony/yaml": "^2.8.11|^3|^4|^5",
         "symfony/filesystem": "^2.5|^3|^4|^5",
-        "consolidation/robo": "~1|~2|~3"
+        "consolidation/robo": "~1|~2|~3|~4"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^2.5.1"
