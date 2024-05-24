@@ -142,6 +142,73 @@ trait WpCommand
             $wpcli->dbSync($source, $target)
         );
 
+        $tasks->addTask(
+            $this->dbSearchReplaceUrls($source, $target, $options)
+        );
+
+        $wpcli = $this->taskWpCliStack()
+            ->siteAlias($target)
+            ->quiet();
+
+        if (!empty($targetExecutable)) {
+            $wpcli->executable($targetExecutable);
+        }
+
+        if (!empty($options['debug'])) {
+            $wpcli->debug();
+        }
+
+        // Flush the cache
+        $tasks->addTask(
+            $wpcli->cache('flush')
+        );
+
+        return $tasks;
+    }
+
+    /**
+     * Search replace the URLs in the database.
+     *
+     * @param  string  $source  Site alias of the source site to search for
+     * @param  string  $target  Site alias of the target site to be used when replaced
+     * @param  array  $options
+     * @option $multisite  (bool) Multisite
+     * @option $debug  (bool) Debug mode
+     */
+    public function dbSearchReplaceUrls($source = null, $target = null, $options = [
+        'multisite' => null,
+        'debug' => false,
+    ]): TaskInterface
+    {
+        if (empty($source)) {
+            $source = $this->ask('Source alias');
+        }
+        if (empty($target)) {
+            $target = $this->ask('Target alias');
+        }
+        if (strpos($target, 'prod') !== false && !$this->confirm(sprintf('This will replace the "%s" datebase, are you sure you want to continue?', $target))) {
+            throw new AbortTasksException('Cancelled');
+        }
+        if (is_null($options['multisite'])) {
+          $options['multisite'] = Robo::config()->get('multisite');
+        }
+
+        $tasks = $this->collectionBuilder();
+        $config = Robo::config();
+        $sourceUrl = $config->get("env.$source.url");
+        $targetUrl = $config->get("env.$target.url");
+
+        if (!is_array($sourceUrl)) {
+            $sourceUrl = [$sourceUrl];
+        }
+        if (!is_array($targetUrl)) {
+            $targetUrl = [$targetUrl];
+        }
+
+        if (count($sourceUrl) !== count($targetUrl)) {
+            throw new RuntimeException(sprintf('Alias "%s" has a different URL count than "%s".', $target, $source));
+        }
+
         // If there are multiple blogs, ensure the wp_site and wp_blogs tables
         // are up to date otherwise --network will not run on all tables.
         if (!empty($options['multisite'])) {
@@ -162,23 +229,6 @@ trait WpCommand
                 ])
             );
         }
-
-        $wpcli = $this->taskWpCliStack()
-            ->siteAlias($target)
-            ->quiet();
-
-        if (!empty($targetExecutable)) {
-            $wpcli->executable($targetExecutable);
-        }
-
-        if (!empty($options['debug'])) {
-            $wpcli->debug();
-        }
-
-        // Flush the cache
-        $tasks->addTask(
-            $wpcli->cache('flush')
-        );
 
         return $tasks;
     }
