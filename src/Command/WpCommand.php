@@ -134,7 +134,7 @@ trait WpCommand
             $wpcli
                 ->structureOnly()
                 ->dbSync($source, $target)
-                ->excludeTables($options['exclude_tables']);
+                ->excludeTables($this->expandTableWildcards($options['exclude_tables'], $source));
         }
 
         // Run database sync
@@ -342,7 +342,7 @@ trait WpCommand
             $wpcli->debug();
         }
         if (!empty($options['exclude_tables'])) {
-            $wpcli->excludeTables($options['exclude_tables']);
+            $wpcli->excludeTables($this->expandTableWildcards($options['exclude_tables'], $target));
         }
 
         $tasks->addTask(
@@ -357,6 +357,36 @@ trait WpCommand
 
         return $tasks;
     }
+
+    /**
+     * Expand wildcard in table names into a wpcli db table subcommand.
+     *
+     * @param array|string $input
+     * @param string $target
+     */
+    protected function expandTableWildcards($input, $target): string
+    {
+        $tables = is_string($input) ? explode(',', $input): $input;
+        $tables = implode(' ', $tables);
+
+        if (! str_contains($tables, '*')) {
+            return $input;
+        }
+
+        /** @var \Generoi\Robo\Command\Wp\WpCliStack $wpcli */
+        $wpcli = $this->taskWpCliStack()
+            ->quiet();
+
+        $executable = Robo::config()->get("env.$target.wpcli");
+        if (!empty($executable)) {
+            $wpcli->setAliasExecutable($target, $executable);
+        }
+        $wpcli->siteAlias($target);
+
+        $subTask = $wpcli->wp("db tables $tables --format=csv --all-tables");
+        return sprintf('$(%s)', $subTask->getCommand());
+    }
+
 
     /**
      * Import database
