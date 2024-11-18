@@ -364,7 +364,7 @@ trait WpCommand
      * @param array|string $input
      * @param string $target
      */
-    protected function expandTableWildcards($input, $target): string
+    protected function expandTableWildcards($input, $target): string|array
     {
         $tables = is_string($input) ? explode(',', $input): $input;
         $tables = implode(' ', $tables);
