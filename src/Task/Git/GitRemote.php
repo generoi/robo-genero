@@ -2,7 +2,6 @@
 
 namespace Generoi\Robo\Task\Git;
 
-use Robo;
 use Robo\Result;
 
 /**
@@ -38,9 +37,6 @@ class GitRemote extends Base
      */
     protected $open = false;
 
-    /**
-     * @param  string  $remote
-     */
     public function __construct(string $remote)
     {
         $this->remote = $remote;
@@ -56,6 +52,7 @@ class GitRemote extends Base
     public function open($open = true)
     {
         $this->open = $open;
+
         return $this;
     }
 
@@ -66,8 +63,9 @@ class GitRemote extends Base
      */
     protected function getGitUser()
     {
-        list(, $path) = explode(':', $this->remote);
-        list($user, $repo) = explode('/', $path);
+        [, $path] = explode(':', $this->remote);
+        [$user, $repo] = explode('/', $path);
+
         return $user;
     }
 
@@ -82,6 +80,7 @@ class GitRemote extends Base
             ->executeCommand("$this->command remote get-url $this->name");
 
         $this->printOutput(true);
+
         return trim($result->getMessage());
     }
 
@@ -96,7 +95,7 @@ class GitRemote extends Base
         if ($this->remote !== $this->getCurrentRemote()) {
             $result = $this->executeCommand($this->getCommand());
 
-            if (!$result->wasSuccessful()) {
+            if (! $result->wasSuccessful()) {
                 return $result;
             }
             if ($this->open) {

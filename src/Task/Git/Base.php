@@ -1,8 +1,9 @@
 <?php
+
 namespace Generoi\Robo\Task\Git;
 
-use Robo\Task\BaseTask;
 use Robo\Exception\TaskException;
+use Robo\Task\BaseTask;
 
 abstract class Base extends BaseTask
 {
@@ -24,7 +25,7 @@ abstract class Base extends BaseTask
     protected $action = '';
 
     /**
-     * @param null|string $pathToGit
+     * @param  null|string  $pathToGit
      *
      * @throws \Robo\Exception\TaskException
      */
@@ -32,11 +33,11 @@ abstract class Base extends BaseTask
     {
         $this->command = $pathToGit;
 
-        if (!$this->command) {
+        if (! $this->command) {
             $this->command = $this->findExecutable('git');
         }
-        if (!$this->command) {
-            throw new TaskException(__CLASS__, "Git executable not found.");
+        if (! $this->command) {
+            throw new TaskException(__CLASS__, 'Git executable not found.');
         }
     }
 
@@ -45,9 +46,10 @@ abstract class Base extends BaseTask
      */
     public function getCommand()
     {
-        if (!$this->command) {
+        if (! $this->command) {
             $this->setGitCommand();
         }
+
         return "{$this->command} {$this->action}{$this->arguments}";
     }
 }

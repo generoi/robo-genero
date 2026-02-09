@@ -38,7 +38,7 @@ trait InstallCommand
         $tasks->taskNpmInstall()
             ->dir($this->getThemePath());
 
-        if (!file_exists('.env')) {
+        if (! file_exists('.env')) {
             $tasks->taskFilesystemStack()
                 ->copy('.env.example', '.env');
         }

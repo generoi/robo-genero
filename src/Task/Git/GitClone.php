@@ -2,9 +2,8 @@
 
 namespace Generoi\Robo\Task\Git;
 
-use Robo;
-use Robo\Result;
 use Robo\Common\ResourceExistenceChecker;
+use Robo\Result;
 use Symfony\Component\Filesystem\Filesystem as sfFilesystem;
 
 /**
@@ -44,36 +43,33 @@ class GitClone extends Base
      */
     protected $deleteGit;
 
-    /**
-     * @param  string  $remote
-     */
     public function __construct(string $remote)
     {
         $this->arg($remote);
-        $this->fs = new sfFilesystem();
+        $this->fs = new sfFilesystem;
     }
 
     /**
      * Set the clone depth.
      *
-     * @param  int  $depth
      * @return $this
      */
     public function depth(int $depth)
     {
         $this->option('depth', $depth);
+
         return $this;
     }
 
     /**
      * Set the clone branch.
      *
-     * @param  string  $branch
      * @return $this
      */
     public function branch(string $branch)
     {
         $this->option('branch', $branch);
+
         return $this;
     }
 
@@ -86,6 +82,7 @@ class GitClone extends Base
     public function deleteGit($delete = true)
     {
         $this->deleteGit = $delete;
+
         return $this;
     }
 
@@ -98,6 +95,7 @@ class GitClone extends Base
     public function path($path)
     {
         $this->arg($this->path = $path);
+
         return $this;
     }
 
@@ -110,22 +108,23 @@ class GitClone extends Base
             return Result::error($this, 'You must specify a destination path with the path() method.');
         }
         if (file_exists($this->path)) {
-            $this->printTaskError("Destination path {dir} already exists", ['dir' => $this->path]);
+            $this->printTaskError('Destination path {dir} already exists', ['dir' => $this->path]);
+
             return Result::success($this);
         }
 
         $result = $this->executeCommand($this->getCommand());
-        if (!$result->wasSuccessful()) {
+        if (! $result->wasSuccessful()) {
             return $result;
         }
 
         if ($this->deleteGit) {
             $gitDir = "{$this->path}/.git";
-            if (!$this->checkResources($gitDir, 'dir')) {
+            if (! $this->checkResources($gitDir, 'dir')) {
                 return Result::error($this, 'Git directories are missing!');
             }
             $this->fs->remove($gitDir);
-            $this->printTaskInfo("Deleted {dir}...", ['dir' => $gitDir]);
+            $this->printTaskInfo('Deleted {dir}...', ['dir' => $gitDir]);
         }
 
         return Result::success($this);

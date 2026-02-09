@@ -5,7 +5,7 @@ namespace Generoi\Robo\Task\Git;
 trait loadTasks
 {
     /**
-     * @param string  $remote
+     * @param  string  $remote
      * @return \Generoi\Robo\Task\Git\Remote
      */
     protected function taskGitRemote($remote)
@@ -14,7 +14,7 @@ trait loadTasks
     }
 
     /**
-     * @param string  $remote
+     * @param  string  $remote
      * @return \Generoi\Robo\Task\Git\Clone
      */
     protected function taskGitClone($remote)

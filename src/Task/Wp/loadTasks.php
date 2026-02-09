@@ -5,7 +5,7 @@ namespace Generoi\Robo\Task\Wp;
 trait loadTasks
 {
     /**
-     * @param string $wpCliPath
+     * @param  string  $wpCliPath
      * @return \Generoi\Robo\Task\Wp\WpCliStack
      */
     protected function taskWpCliStack($wpCliPath = 'wp')

@@ -41,7 +41,7 @@ class WpCliStack extends CommandStack
      * @var arary
      */
     protected $aliasExecutable = [];
-    
+
     protected $defaultExecutable;
 
     public function __construct($wpCliPath = 'wp')
@@ -56,6 +56,7 @@ class WpCliStack extends CommandStack
     {
         $this->executable = $executable;
         $this->defaultExecutable = $executable;
+
         return $this;
     }
 
@@ -73,6 +74,7 @@ class WpCliStack extends CommandStack
         }
         $this->siteAlias = $alias;
         $this->executable = $executable ?: $this->aliasExecutable[$alias] ?? $this->defaultExecutable;
+
         return $this;
     }
 
@@ -90,8 +92,9 @@ class WpCliStack extends CommandStack
      */
     public function wpRootDirectory($wpRootDirectory)
     {
-        $this->printTaskInfo('WP root: <info>' . $wpRootDirectory . '</info>');
+        $this->printTaskInfo('WP root: <info>'.$wpRootDirectory.'</info>');
         $this->option('path', $wpRootDirectory);
+
         return $this;
     }
 
@@ -105,8 +108,9 @@ class WpCliStack extends CommandStack
      */
     public function url($url)
     {
-        $this->printTaskInfo('URL: <info>' . $url . '</info>');
+        $this->printTaskInfo('URL: <info>'.$url.'</info>');
         $this->option('url', $url);
+
         return $this;
     }
 
@@ -119,7 +123,8 @@ class WpCliStack extends CommandStack
      */
     public function ssh($ssh)
     {
-        $this->argForNextCommand('--ssh=' . escapeshellarg($ssh));
+        $this->argForNextCommand('--ssh='.escapeshellarg($ssh));
+
         return $this;
     }
 
@@ -132,7 +137,8 @@ class WpCliStack extends CommandStack
      */
     public function http($http)
     {
-        $this->argForNextCommand('--http=' . escapeshellarg($http));
+        $this->argForNextCommand('--http='.escapeshellarg($http));
+
         return $this;
     }
 
@@ -145,7 +151,8 @@ class WpCliStack extends CommandStack
      */
     public function user($user)
     {
-        $this->argForNextCommand('--user=' . $user);
+        $this->argForNextCommand('--user='.$user);
+
         return $this;
     }
 
@@ -158,7 +165,8 @@ class WpCliStack extends CommandStack
      */
     public function skipPlugins($plugins = [])
     {
-        $this->argForNextCommand('--skip-plugins' . $this->toCommaList($plugins, true));
+        $this->argForNextCommand('--skip-plugins'.$this->toCommaList($plugins, true));
+
         return $this;
     }
 
@@ -171,10 +179,11 @@ class WpCliStack extends CommandStack
      */
     public function skipThemes($themes = [])
     {
-        if (!is_array($themes)) {
+        if (! is_array($themes)) {
             $themes = [$themes];
         }
-        $this->argForNextCommand('--skip-themes' . $this->toCommaList($themes, true));
+        $this->argForNextCommand('--skip-themes'.$this->toCommaList($themes, true));
+
         return $this;
     }
 
@@ -187,6 +196,7 @@ class WpCliStack extends CommandStack
     public function skipPackages()
     {
         $this->argForNextCommand('--skip-packages');
+
         return $this;
     }
 
@@ -199,7 +209,8 @@ class WpCliStack extends CommandStack
      */
     public function require($path)
     {
-        $this->argForNextCommand('--require=' . escapeshellarg($path));
+        $this->argForNextCommand('--require='.escapeshellarg($path));
+
         return $this;
     }
 
@@ -212,6 +223,7 @@ class WpCliStack extends CommandStack
     public function debug()
     {
         $this->option(__FUNCTION__);
+
         return $this;
     }
 
@@ -224,6 +236,7 @@ class WpCliStack extends CommandStack
     public function quiet()
     {
         $this->option(__FUNCTION__);
+
         return $this;
     }
 
@@ -236,7 +249,8 @@ class WpCliStack extends CommandStack
      */
     public function excludeTables($tables)
     {
-        $this->argForNextCommand('--exclude_tables=' . $this->toCommaList($tables));
+        $this->argForNextCommand('--exclude_tables='.$this->toCommaList($tables));
+
         return $this;
     }
 
@@ -249,7 +263,8 @@ class WpCliStack extends CommandStack
      */
     public function tables($tables)
     {
-        $this->argForNextCommand('--tables=' . $this->toCommaList($tables));
+        $this->argForNextCommand('--tables='.$this->toCommaList($tables));
+
         return $this;
     }
 
@@ -262,6 +277,7 @@ class WpCliStack extends CommandStack
     public function structureOnly()
     {
         $this->argForNextCommand('--no-data=true');
+
         return $this;
     }
 
@@ -274,7 +290,8 @@ class WpCliStack extends CommandStack
      */
     public function dbUser($dbUser)
     {
-        $this->argForNextCommand('--dbuser=' . $dbUser);
+        $this->argForNextCommand('--dbuser='.$dbUser);
+
         return $this;
     }
 
@@ -287,7 +304,8 @@ class WpCliStack extends CommandStack
      */
     public function dbPass($dbPass)
     {
-        $this->argForNextCommand('--dbpass=' . $dbPass);
+        $this->argForNextCommand('--dbpass='.$dbPass);
+
         return $this;
     }
 
@@ -300,7 +318,8 @@ class WpCliStack extends CommandStack
      */
     public function database($database)
     {
-        $this->argForNextCommand('--database=' . $database);
+        $this->argForNextCommand('--database='.$database);
+
         return $this;
     }
 
@@ -314,6 +333,7 @@ class WpCliStack extends CommandStack
     public function dryRun()
     {
         $this->argForNextCommand('--dry-run');
+
         return $this;
     }
 
@@ -327,6 +347,7 @@ class WpCliStack extends CommandStack
     public function network()
     {
         $this->argForNextCommand('--network');
+
         return $this;
     }
 
@@ -339,7 +360,8 @@ class WpCliStack extends CommandStack
      */
     public function skipColumns($columns)
     {
-        $this->argForNextCommand('--skip-columns=' . $this->toCommaList($columns));
+        $this->argForNextCommand('--skip-columns='.$this->toCommaList($columns));
+
         return $this;
     }
 
@@ -354,7 +376,8 @@ class WpCliStack extends CommandStack
         if ($path) {
             $this->argForNextCommand($path);
         }
-        return $this->wp("db export --quick --single-transaction");
+
+        return $this->wp('db export --quick --single-transaction');
     }
 
     /**
@@ -368,8 +391,9 @@ class WpCliStack extends CommandStack
         if ($path) {
             $this->argForNextCommand("- >| $path");
         } else {
-            $this->argForNextCommand("-");
+            $this->argForNextCommand('-');
         }
+
         return $this->dbExport('');
     }
 
@@ -384,7 +408,8 @@ class WpCliStack extends CommandStack
         if ($path) {
             $this->argForNextCommand($path);
         }
-        return $this->wp("db import");
+
+        return $this->wp('db import');
     }
 
     /**
@@ -395,12 +420,14 @@ class WpCliStack extends CommandStack
      */
     public function dbImportLocally($path)
     {
-        if (!$path) {
+        if (! $path) {
             $this->argForNextCommand('-');
+
             return $this->dbImport('');
         }
-        $stack = new \Robo\Task\Base\ExecStack();
-        $stack->exec("cat $path | {$this->executable} " . $this->injectArguments('db import') . ' -');
+        $stack = new \Robo\Task\Base\ExecStack;
+        $stack->exec("cat $path | {$this->executable} ".$this->injectArguments('db import').' -');
+
         return $this->exec($stack);
     }
 
@@ -443,6 +470,7 @@ class WpCliStack extends CommandStack
         foreach ($tables as $table) {
             $this->argForNextCommand($table);
         }
+
         return $this->wp('search-replace');
     }
 
@@ -455,6 +483,7 @@ class WpCliStack extends CommandStack
     public function cache($argument)
     {
         $this->argForNextCommand($argument);
+
         return $this->wp('cache');
     }
 
@@ -467,6 +496,7 @@ class WpCliStack extends CommandStack
     public function languageInstallCore($languages)
     {
         $this->argsForNextCommand($languages);
+
         return $this->wp('language core install');
     }
 
@@ -481,6 +511,7 @@ class WpCliStack extends CommandStack
     {
         $this->argForNextCommand($plugin);
         $this->argsForNextCommand($languages);
+
         return $this->wp('language plugin install');
     }
 
@@ -503,14 +534,14 @@ class WpCliStack extends CommandStack
     public function languageUpdatePlugin($plugin)
     {
         $this->argForNextCommand($plugin);
+
         return $this->wp('language plugin update');
     }
 
     /**
      * Runs the given wp cli command.
      *
-     * @param string $command
-     *
+     * @param  string  $command
      * @return $this
      */
     public function wp($command)
@@ -525,8 +556,7 @@ class WpCliStack extends CommandStack
     /**
      * Add an argument used in the next invocation of drush.
      *
-     * @param string $arg
-     *
+     * @param  string  $arg
      * @return $this
      */
     protected function argForNextCommand($arg)
@@ -537,16 +567,15 @@ class WpCliStack extends CommandStack
     /**
      * Add multiple arguments used in the next invocation of wp cli.
      *
-     * @param array|string $args can also be multiple parameters
-     *
+     * @param  array|string  $args  can also be multiple parameters
      * @return $this
      */
     protected function argsForNextCommand($args)
     {
-        if (!is_array($args)) {
+        if (! is_array($args)) {
             $args = func_get_args();
         }
-        $this->argumentsForNextCommand .= ' ' . implode(' ', $args);
+        $this->argumentsForNextCommand .= ' '.implode(' ', $args);
 
         return $this;
     }
@@ -560,10 +589,10 @@ class WpCliStack extends CommandStack
     protected function injectArguments($command)
     {
         $cmd =
-            $this->siteAlias . ' '
-            . $command
-            . $this->arguments
-            . $this->argumentsForNextCommand;
+            $this->siteAlias.' '
+            .$command
+            .$this->arguments
+            .$this->argumentsForNextCommand;
         $this->argumentsForNextCommand = '';
 
         return $cmd;
@@ -584,6 +613,7 @@ class WpCliStack extends CommandStack
         if ($addAssignment && mb_strlen($list)) {
             $list = "=$list";
         }
+
         return $list;
     }
 }

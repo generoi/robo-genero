@@ -11,26 +11,27 @@ trait DeployCommand
     /**
      * Trigger a GitHub Deploy Action
      *
-     * @param  string  $workflow Workflow file
-     * @param  array  $options
+     * @param  string  $workflow  Workflow file
+     *
      * @option $uri (string) GitHub repository URI
      * @option $branch (string) Branch to deploy
      * @option $log_level (string) Log Level
      * @option $ref (string) Optional tag to checkout
      */
-    public function deploy(string $workflow = null, array $options = [
+    public function deploy(?string $workflow = null, array $options = [
         'uri' => null,
         'branch' => 'master',
         'log_level' => '-vv',
-        'ref' => ''
-    ]): TaskInterface {
+        'ref' => '',
+    ]): TaskInterface
+    {
         $githubToken = $this->taskComposerConfig()
             ->arg('github-oauth.github.com')
             ->useGlobal()
             ->printOutput(false)
             ->run();
 
-        if (!$githubToken->wasSuccessful()) {
+        if (! $githubToken->wasSuccessful()) {
             throw new TaskException($this, 'You need to set up a personal GitHub Access Token with composer to deploy');
         }
 
@@ -45,7 +46,6 @@ trait DeployCommand
     /**
      * Trigger a GitHub Deploy Action to production
      *
-     * @param  array  $options
      * @option $workflow (string) Workflow file
      * @option $uri (string) GitHub repository URI
      * @option $branch (string) Branch to deploy
@@ -57,15 +57,15 @@ trait DeployCommand
         'uri' => null,
         'branch' => null,
         'log_level' => null,
-        'ref' => null
-    ]): TaskInterface {
+        'ref' => null,
+    ]): TaskInterface
+    {
         return $this->deploy($options['workflow'], $options);
     }
 
     /**
      * Trigger a GitHub Deploy Action to staging
      *
-     * @param  array  $options
      * @option $workflow (string) Workflow file
      * @option $uri (string) GitHub repository URI
      * @option $branch (string) Branch to deploy
@@ -77,8 +77,9 @@ trait DeployCommand
         'uri' => null,
         'branch' => null,
         'log_level' => null,
-        'ref' => null
-    ]): TaskInterface {
+        'ref' => null,
+    ]): TaskInterface
+    {
         return $this->deploy($options['workflow'], $options);
     }
 }

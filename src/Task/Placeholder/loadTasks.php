@@ -14,7 +14,6 @@ trait loadTasks
     }
 
     /**
-     * @param string  $from
      * @return \Generoi\Robo\Task\Placeholder\Replace
      */
     protected function taskPlaceholderReplace(string $from)

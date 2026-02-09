@@ -36,30 +36,22 @@ class GitHubWorkflowDispatch extends GitHub
      */
     protected $inputs = [];
 
-    /**
-     * @param string $workflow
-     */
     public function __construct(string $workflow)
     {
         $this->workflow = $workflow;
     }
 
-    /**
-     * @param string $reference
-     */
     public function reference(string $reference): self
     {
         $this->reference = $reference;
+
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param string $value
-     */
     public function input(string $key, string $value): self
     {
         $this->inputs[$key] = $value;
+
         return $this;
     }
 
@@ -70,7 +62,7 @@ class GitHubWorkflowDispatch extends GitHub
     {
         $this->printTaskInfo('Dispatching workflow {workflow}', ['workflow' => $this->workflow]);
         $this->startTimer();
-        list($code, $data) = $this->sendRequest(
+        [$code, $data] = $this->sendRequest(
             sprintf('actions/workflows/%s/dispatches', $this->workflow),
             [
                 'ref' => $this->reference,

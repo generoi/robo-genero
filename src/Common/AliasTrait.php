@@ -9,7 +9,7 @@ trait AliasTrait
     /**
      * Parse an aliased source/destination string.
      *
-     * @param  string  $string A remote in the format `alias:%files`
+     * @param  string  $string  A remote in the format `alias:%files`
      * @return array
      */
     protected function parseAlias($string)
@@ -17,16 +17,16 @@ trait AliasTrait
         $config = Robo::config();
         if (strpos($string, ':') !== false) {
             // Has both remote and path
-            list($env, $path) = explode(':', $string);
+            [$env, $path] = explode(':', $string);
         } elseif ($config->has("env.$string")) {
             // Has only remote
-            list($env, $path) = [$string, null];
+            [$env, $path] = [$string, null];
         } elseif ($string === 'self') {
             // Has only local
-            list($env, $path) = ['self', null];
+            [$env, $path] = ['self', null];
         } else {
             // Has only path
-            list($env, $path) = ['self', $string];
+            [$env, $path] = ['self', $string];
         }
 
         if ($env === 'self') {
@@ -39,7 +39,7 @@ trait AliasTrait
             // Native rsync remote
             if (strpos($env, '@') !== false) {
                 // Has a username and a hostname
-                list($user, $host) = explode('@', $env);
+                [$user, $host] = explode('@', $env);
                 $result['user'] = $user;
                 $result['host'] = $host;
             } else {
@@ -57,7 +57,7 @@ trait AliasTrait
                 $result['path'] = $path;
             } else {
                 // Relative path
-                $result['path'] = rtrim($result['path'], '/') . '/' . ltrim($path, '/');
+                $result['path'] = rtrim($result['path'], '/').'/'.ltrim($path, '/');
                 $result['relativePath'] = $path;
             }
         }
@@ -69,7 +69,6 @@ trait AliasTrait
      * Replace all placeholders with their appropriate values defined in
      * `robo.yml`.
      *
-     * @param  string  $string
      * @return string
      */
     protected function replacePlaceholders(string $string)
@@ -77,6 +76,7 @@ trait AliasTrait
         if ($placeholders = Robo::config()->get('placeholders')) {
             return str_replace(array_keys($placeholders), array_values($placeholders), $string);
         }
+
         return $string;
     }
 }

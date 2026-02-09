@@ -2,11 +2,11 @@
 
 namespace Generoi\Robo\Task\Yaml;
 
+use Dflydev\DotAccessData\Data;
 use Robo;
 use Robo\Result;
 use Robo\Task\BaseTask;
 use Symfony\Component\Yaml\Yaml as YamlLib;
-use Dflydev\DotAccessData\Data;
 
 /**
  * Setup Bedrock project.
@@ -30,6 +30,7 @@ class Yaml extends BaseTask
      * @var \Dflydev\DotAccessData\Data
      */
     protected $data;
+
     /**
      * @var array
      */
@@ -67,31 +68,32 @@ class Yaml extends BaseTask
     /**
      * Set a value
      *
-     * @param  string  $key
      * @param  mixed  $value
      * @return $this
      */
     public function set(string $key, $value)
     {
         $this->set[$key] = $value;
+
         return $this;
     }
 
     /**
      * Set a value
      *
-     * @param  string  $key
      * @param  mixed  $value
      * @return $this
      */
     public function delete(string $key)
     {
         $this->delete[] = $key;
+
         return $this;
     }
 
     /**
      * Set values.
+     *
      * @return $this
      */
     protected function processSet()
@@ -102,9 +104,9 @@ class Yaml extends BaseTask
                 $this->changes++;
 
                 $this->data->set($key, $value);
-                $this->printTaskSuccess("{key} updated", ['key' => $key]);
+                $this->printTaskSuccess('{key} updated', ['key' => $key]);
             } else {
-                $this->printTaskInfo("{key} unchanged", ['key' => $key]);
+                $this->printTaskInfo('{key} unchanged', ['key' => $key]);
             }
         }
 
@@ -124,9 +126,9 @@ class Yaml extends BaseTask
                 $this->changes++;
 
                 $this->data->remove($key);
-                $this->printTaskSuccess("{key} deleted", ['key' => $key]);
+                $this->printTaskSuccess('{key} deleted', ['key' => $key]);
             } else {
-                $this->printTaskInfo("{key} unchanged", ['key' => $key]);
+                $this->printTaskInfo('{key} unchanged', ['key' => $key]);
             }
         }
 
@@ -145,9 +147,10 @@ class Yaml extends BaseTask
             $yaml = YamlLib::dump($this->data->export(), $this->expandLevel, $this->indentation);
             $res = file_put_contents($this->file, $yaml);
             if ($res === false) {
-                return Result::error($this, "Error writing to file {filename}.", ['filename' => $this->file]);
+                return Result::error($this, 'Error writing to file {filename}.', ['filename' => $this->file]);
             }
         }
+
         return Result::success($this, '', ['changes' => $this->changes]);
     }
 }

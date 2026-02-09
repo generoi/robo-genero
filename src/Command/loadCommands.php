@@ -6,16 +6,16 @@ use Generoi\Robo\Common\ThemeTrait;
 
 trait loadCommands
 {
-    use ConfigCommand,
+    use BuildCommand,
+        ConfigCommand,
         DeployCommand,
-        RsyncCommand,
-        SetupCommand,
-        SearchReplaceCommand,
-        TestCommand,
         InstallCommand,
-        BuildCommand,
-        WpCommand,
-        ThemeTrait {
+        RsyncCommand,
+        SearchReplaceCommand,
+        SetupCommand,
+        TestCommand,
+        ThemeTrait,
+        WpCommand {
             ThemeTrait::getThemePath insteadof InstallCommand, TestCommand, BuildCommand, WpCommand;
-    }
+        }
 }

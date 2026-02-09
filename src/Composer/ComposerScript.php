@@ -16,7 +16,7 @@ class ComposerScript
     /**
      * @param  \Composer\Script\Event
      */
-    public function __construct(Event $event = null)
+    public function __construct(?Event $event = null)
     {
         $this->event = $event;
     }
@@ -37,7 +37,7 @@ class ComposerScript
      */
     public static function __callStatic($name, $arguments)
     {
-        list($event) = $arguments;
+        [$event] = $arguments;
         $command = preg_replace('/[A-Z]/', ':$1', $name);
         $result = (new static($event))->robo($command);
     }
@@ -50,7 +50,7 @@ class ComposerScript
      */
     public function robo($command)
     {
-        $robo = getcwd() . '/vendor/bin/robo';
+        $robo = getcwd().'/vendor/bin/robo';
         $commands = explode(' ', $command);
         array_unshift($commands, 'php', $robo);
 
@@ -64,9 +64,10 @@ class ComposerScript
      */
     public function validate()
     {
-        if (!$this->isInteractive()) {
+        if (! $this->isInteractive()) {
             throw new RuntimeException('Interactive mode is required');
         }
+
         return $this;
     }
 
@@ -83,7 +84,6 @@ class ComposerScript
     /**
      * Run a process.
      *
-     * @param  \Symfony\Component\Process\Process  $process
      * @return $this
      */
     public function run(Process $process)
@@ -95,8 +95,8 @@ class ComposerScript
         }
 
         $process->run();
-        if (!$process->isSuccessful()) {
-            throw new RuntimeException('Error Output: '. $process->getErrorOutput(), $process->getExitCode());
+        if (! $process->isSuccessful()) {
+            throw new RuntimeException('Error Output: '.$process->getErrorOutput(), $process->getExitCode());
         }
 
         return $process;

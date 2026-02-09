@@ -37,9 +37,10 @@ class PhpCodeBeautifier extends BaseTask
      */
     public function run()
     {
-        if (!file_exists('./vendor/bin/phpcbf')) {
+        if (! file_exists('./vendor/bin/phpcbf')) {
             return Result::errorMissingPackage($this, 'phpcs', 'squizlabs/php_codesniffer');
         }
+
         return $this->executeCommand("./vendor/bin/phpcbf {$this->file}");
     }
 }

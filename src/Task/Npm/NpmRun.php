@@ -30,6 +30,7 @@ class NpmRun extends Robo\Task\Npm\Base
     public function script($script)
     {
         $this->arg($script);
+
         return $this;
     }
 
@@ -42,6 +43,7 @@ class NpmRun extends Robo\Task\Npm\Base
     public function rawScript($script)
     {
         $this->rawArg($script);
+
         return $this;
     }
 
@@ -53,6 +55,7 @@ class NpmRun extends Robo\Task\Npm\Base
     public function noProgress()
     {
         $this->option('no-progress');
+
         return $this;
     }
 
@@ -62,6 +65,7 @@ class NpmRun extends Robo\Task\Npm\Base
     public function run()
     {
         $this->printTaskInfo('Run Npm script: {arguments}', ['arguments' => $this->arguments]);
+
         return $this->executeCommand($this->getCommand());
     }
 }

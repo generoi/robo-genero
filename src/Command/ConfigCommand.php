@@ -17,6 +17,7 @@ trait ConfigCommand
         $config = Robo::config();
         if ($config->has($option)) {
             $this->writeln($config->get($option));
+
             return new ResultData(ResultData::EXITCODE_OK);
         }
 

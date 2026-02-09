@@ -13,8 +13,9 @@ trait BuildCommand
      * Build production artifacts.
      */
     public function buildProduction(array $options = [
-        'npm-script' => 'build:production'
-    ]): TaskInterface {
+        'npm-script' => 'build:production',
+    ]): TaskInterface
+    {
         return $this->taskNpmRun()
             ->rawScript($options['npm-script'])
             ->dir($this->getThemePath());
@@ -24,8 +25,9 @@ trait BuildCommand
      * Build development artifacts.
      */
     public function buildDevelopment(array $options = [
-        'npm-script' => 'build'
-    ]): TaskInterface {
+        'npm-script' => 'build',
+    ]): TaskInterface
+    {
         return $this->taskNpmRun()
             ->rawScript($options['npm-script'])
             ->dir($this->getThemePath());

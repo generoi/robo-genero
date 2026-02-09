@@ -5,7 +5,7 @@ namespace Generoi\Robo\Task\Yaml;
 trait loadTasks
 {
     /**
-     * @param string $file
+     * @param  string  $file
      * @return \Generoi\Robo\Task\Yaml\Yaml
      */
     protected function taskYaml($file)

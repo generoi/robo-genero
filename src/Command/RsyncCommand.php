@@ -17,10 +17,10 @@ trait RsyncCommand
      * Rsync files between two targets.
      *
      * @param  string  $source  Source target. Can be an aliased string
-     *     `@production:%files`
+     *                          `@production:%files`
      * @param  string  $destination  Destination target. Can
-     *     be an aliased string `@production:%files`
-     * @param  array  $options
+     *                               be an aliased string `@production:%files`
+     *
      * @option $dry-run (bool) Run a dry-run before
      * @option $exclude (array) Exclude patterns
      * @option $options (array) Map of extra options passed straight to rsync
@@ -39,15 +39,15 @@ trait RsyncCommand
             ->excludeVcs()
             ->checksum();
 
-        if (!empty($options['exclude'])) {
+        if (! empty($options['exclude'])) {
             $rsync->exclude($options['exclude']);
         }
 
-        if (!empty($options['options'])) {
+        if (! empty($options['options'])) {
             $rsync->options($options['options']);
         }
 
-        if (strpos($destination, 'prod') !== false && !$this->confirm(sprintf('This will replace files on "%s", are you sure you want to continue?', $destination))) {
+        if (strpos($destination, 'prod') !== false && ! $this->confirm(sprintf('This will replace files on "%s", are you sure you want to continue?', $destination))) {
             throw new AbortTasksException('Cancelled');
         }
 
@@ -59,10 +59,11 @@ trait RsyncCommand
         //     }
         // }
 
-        if (!empty($options['dry-run'])) {
+        if (! empty($options['dry-run'])) {
             if ($this->confirm('Dry run does currently not work, do you wish to continue with the real command?')) {
                 return $rsync;
             }
+
             return $this->collectionBuilder();
             // return Result::success($rsync, 'Skipping dry run');
             // @see https://github.com/consolidation/Robo/issues/583
@@ -83,15 +84,15 @@ trait RsyncCommand
      * Pull files from remote to self. For example: `rsync:pull @staging:%files`
      *
      * @param  string  $source  Source target. Can be an aliased string
-     *     `@production:%files`
-     * @param  array  $options
+     *                          `@production:%files`
+     *
      * @option $dry-run (bool) Run a dry-run before
      */
     public function rsyncPull(string $source, array $options = ['dry-run' => true]): TaskInterface
     {
         $config = $this->parseAlias($source);
         $destination = 'self';
-        if (!empty($config['relativePath'])) {
+        if (! empty($config['relativePath'])) {
             $destination = "self:{$config['relativePath']}";
         }
 
@@ -102,15 +103,15 @@ trait RsyncCommand
      * Push files from self to remote. For example: `rsync:push @staging:%files`
      *
      * @param  string  $destination  Destination target. Can be an aliased
-     *     string `@production:%files`
-     * @param  array  $options
+     *                               string `@production:%files`
+     *
      * @option $dry-run (bool) Run a dry-run before
      */
     public function rsyncPush(string $destination, array $options = ['dry-run' => true]): TaskInterface
     {
         $config = $this->parseAlias($destination);
         $source = 'self';
-        if (!empty($config['relativePath'])) {
+        if (! empty($config['relativePath'])) {
             $source = "self:{$config['relativePath']}";
         }
 

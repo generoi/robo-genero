@@ -2,7 +2,6 @@
 
 namespace Generoi\Robo\Task\Placeholder;
 
-use Robo;
 use Robo\Result;
 use Robo\Task\BaseTask;
 use Symfony\Component\Finder\Finder;
@@ -66,11 +65,11 @@ class Find extends BaseTask
      * @var array
      */
     protected $dirs = [
-        '.'
+        '.',
     ];
 
     /**
-     * @param  null|string  $placeholder Placeholder to search for
+     * @param  null|string  $placeholder  Placeholder to search for
      */
     public function __construct($placeholder = null)
     {
@@ -78,12 +77,13 @@ class Find extends BaseTask
     }
 
     /**
-     * @param  string  $placeholder Placeholder to search for
+     * @param  string  $placeholder  Placeholder to search for
      * @return $this
      */
     public function placeholder($string)
     {
         $this->placeholder = $string;
+
         return $this;
     }
 
@@ -97,6 +97,7 @@ class Find extends BaseTask
     {
         $this->printTaskInfo('Checking root files');
         $this->checkRootFiles = $check;
+
         return $this;
     }
 
@@ -108,10 +109,11 @@ class Find extends BaseTask
      */
     public function directories($directories)
     {
-        if (!$directories) {
+        if (! $directories) {
             return $this;
         }
         $this->dirs = is_string($directories) ? explode(',', $directories) : (array) $directories;
+
         return $this;
     }
 
@@ -123,10 +125,11 @@ class Find extends BaseTask
      */
     public function exclude($exclude)
     {
-        if (!$exclude) {
+        if (! $exclude) {
             return $this;
         }
         $this->exclude = is_string($exclude) ? explode(',', $exclude) : (array) $exclude;
+
         return $this;
     }
 
@@ -139,6 +142,7 @@ class Find extends BaseTask
     public function io($io)
     {
         $this->io = $io;
+
         return $this;
     }
 
@@ -150,14 +154,14 @@ class Find extends BaseTask
      */
     protected function findFiles()
     {
-        $rootFinder = new Finder();
+        $rootFinder = new Finder;
         $rootFinder->files()
             ->in('.')
             ->depth('== 0')
             ->ignoreDotFiles(false)
             ->contains("/{$this->placeholder}/");
 
-        $finder = new Finder();
+        $finder = new Finder;
         $finder->files()
             ->in($this->dirs)
             ->append($rootFinder)
@@ -189,7 +193,7 @@ class Find extends BaseTask
             return ltrim(str_replace(getcwd(), '', $file->getPathname()), '/');
         }, iterator_to_array($this->findFiles()));
 
-        $this->printTaskInfo('Found <info>' . count($files) . '</info> files with matches');
+        $this->printTaskInfo('Found <info>'.count($files).'</info> files with matches');
 
         if ($this->io) {
             $this->io->listing($files);

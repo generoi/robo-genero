@@ -37,7 +37,7 @@ class PhpCodeSniffer extends BaseTask
      */
     public function run()
     {
-        if (!file_exists('./vendor/bin/phpcs')) {
+        if (! file_exists('./vendor/bin/phpcs')) {
             return Result::errorMissingPackage($this, 'phpcs', 'squizlabs/php_codesniffer');
         }
 

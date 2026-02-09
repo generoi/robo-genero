@@ -2,9 +2,7 @@
 
 namespace Generoi\Robo\Command;
 
-use Robo\Collection\CollectionBuilder;
 use Robo\Contract\TaskInterface;
-use Robo\Result;
 use Robo\Robo;
 
 trait SetupCommand
@@ -14,14 +12,14 @@ trait SetupCommand
      */
     protected function reloadConfig(): void
     {
-        Robo::loadConfiguration([getcwd() . '/robo.yml']);
+        Robo::loadConfiguration([getcwd().'/robo.yml']);
     }
 
     /**
      * Setup a new project from scratch.
      *
      * @param  string  $machineName  Machine name
-     * @param  array  $options
+     *
      * @option $remote  The remote git repository
      * @option $theme-repository  The git repository when creating the theme
      * @option $theme-branch  The git repository branch for the theme
@@ -29,7 +27,7 @@ trait SetupCommand
      *
      * @todo return task interface
      */
-    public function setup(string $machineName = null, array $options = [
+    public function setup(?string $machineName = null, array $options = [
         'remote' => null,
         'theme-repository' => null,
         'theme-branch' => null,
@@ -43,13 +41,13 @@ trait SetupCommand
         if (empty($machineName)) {
             $machineName = $this->askDefault('Project name (machine name)', $config->get('machine_name'));
         }
-        if (!isset($options['remote'])) {
+        if (! isset($options['remote'])) {
             $options['remote'] = $this->askDefault('Remote Git repository', "git@github.com:{$config->get('organization')}/{$machineName}.git");
         }
-        if (!isset($options['theme-repository'])) {
+        if (! isset($options['theme-repository'])) {
             $options['theme-repository'] = $this->askDefault('Git repository to clone theme from', $config->get('command.setup.theme.options.theme-repository'));
         }
-        if (!isset($options['theme-branch'])) {
+        if (! isset($options['theme-branch'])) {
             $options['theme-branch'] = $this->askDefault('Git repository branch', $config->get('command.setup.theme.options.theme-branch'));
         }
 
@@ -60,21 +58,21 @@ trait SetupCommand
         $this->writeln('');
 
         // Modify robo.yml
-        if (!empty($machineName)) {
+        if (! empty($machineName)) {
             $tasks->addTask(
                 $this->setupYaml($machineName)
             );
         }
 
         // Clone theme
-        if (!empty($options['theme-repository'])) {
+        if (! empty($options['theme-repository'])) {
             $tasks->addTask(
                 $this->setupTheme(null, $options)
             );
         }
 
         // Set git remote
-        if (!empty($options['remote'])) {
+        if (! empty($options['remote'])) {
             $tasks->addTask(
                 $this->setupRemote($options['remote'])
             );
@@ -123,8 +121,6 @@ trait SetupCommand
 
     /**
      * Setup robo.yml
-     *
-     * @param  string  $machineName
      */
     public function setupYaml(string $machineName): TaskInterface
     {
@@ -144,15 +140,16 @@ trait SetupCommand
     /**
      * Setup a new theme.
      *
-     * @param  string  $path
      * @param  array  $options
+     *
      * @option $theme-repository Remote repository to use when cloning a theme
      * @option $theme-branch  The git repository branch for the theme
      */
-    public function setupTheme(string $path = null, $options = [
-      'theme-repository' => null,
-      'theme-branch' => null,
-    ]): TaskInterface {
+    public function setupTheme(?string $path = null, $options = [
+        'theme-repository' => null,
+        'theme-branch' => null,
+    ]): TaskInterface
+    {
         if (empty($path)) {
             $path = Robo::config()->get('theme_path');
         }

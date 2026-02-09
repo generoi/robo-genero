@@ -5,7 +5,7 @@ namespace Generoi\Robo\Task\Npm;
 trait loadTasks
 {
     /**
-     * @param string $npmPath
+     * @param  string  $npmPath
      * @return \Generoi\Robo\Task\Npm\NpmRun
      */
     protected function taskNpmRun($npmPath = null)

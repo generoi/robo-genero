@@ -7,8 +7,8 @@ use Robo\Exception\AbortTasksException;
 use Robo\Exception\TaskException;
 use Robo\Robo;
 use RuntimeException;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Finder\Finder;
 
 trait WpCommand
 {
@@ -17,6 +17,7 @@ trait WpCommand
      *
      * @param  string  $source  Site alias of the source site
      * @param  array  $options
+     *
      * @option $exclude_tables  (array|string) Comman separated list of tables
      *     to exclude during dump.
      * @option $target  (string) Site alias of the target site
@@ -38,6 +39,7 @@ trait WpCommand
      *
      * @param  string  $target  Site alias of the target site
      * @param  array  $options
+     *
      * @option $exclude_tables  (array|string) Comman separated list of tables
      *     to exclude during dump.
      * @option $target  (string) Site alias of the source site
@@ -61,6 +63,7 @@ trait WpCommand
      * @param  string  $source  Site alias of the source site
      * @param  string  $target  Site alias of the target site
      * @param  array  $options
+     *
      * @option $exclude_tables  (array|string) Comman separated list of tables
      *     to exclude during dump.
      * @option $multisite  (bool) Multisite
@@ -77,10 +80,10 @@ trait WpCommand
             ->quiet();
 
         if (is_null($options['multisite'])) {
-          $options['multisite'] = Robo::config()->get('multisite');
+            $options['multisite'] = Robo::config()->get('multisite');
         }
 
-        if (!empty($options['debug'])) {
+        if (! empty($options['debug'])) {
             $wpcli->debug();
         }
 
@@ -91,7 +94,7 @@ trait WpCommand
             $target = $this->ask('Target alias');
         }
 
-        if (strpos($target, 'prod') !== false && !$this->confirm(sprintf('This will replace the "%s" datebase, are you sure you want to continue?', $target))) {
+        if (strpos($target, 'prod') !== false && ! $this->confirm(sprintf('This will replace the "%s" datebase, are you sure you want to continue?', $target))) {
             throw new AbortTasksException('Cancelled');
         }
 
@@ -109,10 +112,10 @@ trait WpCommand
             throw new TaskException($wpcli, sprintf('Alias "%s" does not exist or has no url value', $target));
         }
 
-        if (!is_array($sourceUrl)) {
+        if (! is_array($sourceUrl)) {
             $sourceUrl = [$sourceUrl];
         }
-        if (!is_array($targetUrl)) {
+        if (! is_array($targetUrl)) {
             $targetUrl = [$targetUrl];
         }
 
@@ -120,17 +123,17 @@ trait WpCommand
             throw new RuntimeException(sprintf('Alias "%s" has a different URL count than "%s".', $target, $source));
         }
 
-        if (!empty($sourceExecutable)) {
+        if (! empty($sourceExecutable)) {
             $wpcli->setAliasExecutable($source, $sourceExecutable);
         }
 
-        if (!empty($targetExecutable)) {
+        if (! empty($targetExecutable)) {
             $wpcli->setAliasExecutable($target, $targetExecutable);
         }
 
         $wpcli->siteAlias($target);
 
-        if (!empty($options['exclude_tables'])) {
+        if (! empty($options['exclude_tables'])) {
             $wpcli
                 ->structureOnly()
                 ->dbSync($source, $target)
@@ -150,11 +153,11 @@ trait WpCommand
             ->siteAlias($target)
             ->quiet();
 
-        if (!empty($targetExecutable)) {
+        if (! empty($targetExecutable)) {
             $wpcli->executable($targetExecutable);
         }
 
-        if (!empty($options['debug'])) {
+        if (! empty($options['debug'])) {
             $wpcli->debug();
         }
 
@@ -172,6 +175,7 @@ trait WpCommand
      * @param  string  $source  Site alias of the source site to search for
      * @param  string  $target  Site alias of the target site to be used when replaced
      * @param  array  $options
+     *
      * @option $multisite  (bool) Multisite
      * @option $debug  (bool) Debug mode
      */
@@ -186,11 +190,11 @@ trait WpCommand
         if (empty($target)) {
             $target = $this->ask('Target alias');
         }
-        if (strpos($target, 'prod') !== false && !$this->confirm(sprintf('This will replace the "%s" datebase, are you sure you want to continue?', $target))) {
+        if (strpos($target, 'prod') !== false && ! $this->confirm(sprintf('This will replace the "%s" datebase, are you sure you want to continue?', $target))) {
             throw new AbortTasksException('Cancelled');
         }
         if (is_null($options['multisite'])) {
-          $options['multisite'] = Robo::config()->get('multisite');
+            $options['multisite'] = Robo::config()->get('multisite');
         }
 
         $tasks = $this->collectionBuilder();
@@ -198,10 +202,10 @@ trait WpCommand
         $sourceUrl = $config->get("env.$source.url");
         $targetUrl = $config->get("env.$target.url");
 
-        if (!is_array($sourceUrl)) {
+        if (! is_array($sourceUrl)) {
             $sourceUrl = [$sourceUrl];
         }
-        if (!is_array($targetUrl)) {
+        if (! is_array($targetUrl)) {
             $targetUrl = [$targetUrl];
         }
 
@@ -211,7 +215,7 @@ trait WpCommand
 
         // If there are multiple blogs, ensure the wp_site and wp_blogs tables
         // are up to date otherwise --network will not run on all tables.
-        if (!empty($options['multisite'])) {
+        if (! empty($options['multisite'])) {
             foreach ($sourceUrl as $idx => $url) {
                 $tasks->addTask(
                     $this->dbRenameSite($target, $url, $targetUrl[$idx])
@@ -240,6 +244,7 @@ trait WpCommand
      * @param  string  $search  String to search for
      * @param  string  $replace  Replacement string
      * @param  array  $options
+     *
      * @option $flush  (bool) Flush the cache
      * @option $debug  (bool) Debug mode
      * @option $hostnames  (bool) Parse the host out of a URL and rename that as well.
@@ -261,7 +266,7 @@ trait WpCommand
         if (empty($replace)) {
             $replace = $this->ask('Replace with');
         }
-        if (!isset($options['tables'])) {
+        if (! isset($options['tables'])) {
             $options['tables'] = [];
         }
 
@@ -270,6 +275,7 @@ trait WpCommand
 
         if ($search === $replace) {
             $this->writeln(sprintf('Replacement value "%s" is identical to search value "%s". Skipping…', $replace, $search));
+
             return $this->collectionBuilder();
         }
 
@@ -277,7 +283,7 @@ trait WpCommand
             $wpcli->executable($executable);
         }
 
-        if (!empty($options['debug'])) {
+        if (! empty($options['debug'])) {
             $wpcli->debug();
         }
 
@@ -290,14 +296,14 @@ trait WpCommand
         $searchHost = parse_url($search, PHP_URL_HOST);
         $replaceHost = parse_url($replace, PHP_URL_HOST);
 
-        if (!empty($options['hostnames']) && $searchHost && $replaceHost && $searchHost !== $replaceHost) {
+        if (! empty($options['hostnames']) && $searchHost && $replaceHost && $searchHost !== $replaceHost) {
             $wpcli
                 ->network()
                 ->skipColumns('guid')
                 ->searchReplace($searchHost, $replaceHost, $options['tables']);
         }
 
-        if (!empty($options['flush'])) {
+        if (! empty($options['flush'])) {
             $wpcli->cache('flush');
         }
 
@@ -309,16 +315,18 @@ trait WpCommand
      *
      * @param  string  $target  Site alias of the target site
      * @param  array  $options
+     *
      * @option $gzip  (bool) Archive
      * @option $debug  (bool) Debug mode
      * @option $exclude_tables  (array|string) Comman separated list of tables
      *     to exclude during dump.
+     *
      * @return \Generoi\Robo\Command\Wp\WpCliStack
      */
     public function dbExport($target = null, $path = null, $options = [
         'gzip' => false,
         'debug' => false,
-        'exclude_tables' => null
+        'exclude_tables' => null,
     ]): TaskInterface
     {
         if (empty($target)) {
@@ -326,7 +334,7 @@ trait WpCommand
         }
 
         if (empty($path)) {
-            $path = 'database.' . $target . '.' . date('Y-m-d-His') . '.sql';
+            $path = 'database.'.$target.'.'.date('Y-m-d-His').'.sql';
         }
 
         $tasks = $this->collectionBuilder();
@@ -338,10 +346,10 @@ trait WpCommand
             $wpcli->executable($executable);
         }
 
-        if (!empty($options['debug'])) {
+        if (! empty($options['debug'])) {
             $wpcli->debug();
         }
-        if (!empty($options['exclude_tables'])) {
+        if (! empty($options['exclude_tables'])) {
             $wpcli->excludeTables($this->expandTableWildcards($options['exclude_tables'], $target));
         }
 
@@ -349,7 +357,7 @@ trait WpCommand
             $wpcli->dbExportLocally($path)
         );
 
-        if (!empty($options['gzip'])) {
+        if (! empty($options['gzip'])) {
             $tasks->addTask(
                 $this->taskExec('gzip')->arg($path)
             );
@@ -361,12 +369,12 @@ trait WpCommand
     /**
      * Expand wildcard in table names into a wpcli db table subcommand.
      *
-     * @param array|string $input
-     * @param string $target
+     * @param  array|string  $input
+     * @param  string  $target
      */
     protected function expandTableWildcards($input, $target): string|array
     {
-        $tables = is_string($input) ? explode(',', $input): $input;
+        $tables = is_string($input) ? explode(',', $input) : $input;
         $tables = implode(' ', $tables);
 
         if (! str_contains($tables, '*')) {
@@ -378,15 +386,15 @@ trait WpCommand
             ->quiet();
 
         $executable = Robo::config()->get("env.$target.wpcli");
-        if (!empty($executable)) {
+        if (! empty($executable)) {
             $wpcli->setAliasExecutable($target, $executable);
         }
         $wpcli->siteAlias($target);
 
         $subTask = $wpcli->wp("db tables $tables --format=csv --all-tables");
+
         return sprintf('$(%s)', $subTask->getCommand());
     }
-
 
     /**
      * Import database
@@ -394,7 +402,9 @@ trait WpCommand
      * @param  string  $target  Site alias of the target site
      * @param  string  $path  Path to database dump
      * @param  array  $options
+     *
      * @option $debug  (bool) Debug mode
+     *
      * @return \Generoi\Robo\Command\Wp\WpCliStack
      */
     public function dbImport($target = null, $path = null, $options = [
@@ -422,6 +432,7 @@ trait WpCommand
                 if (file_exists($selected)) {
                     return $selected;
                 }
+
                 return $defaultValidator($selected);
             });
 
@@ -433,7 +444,7 @@ trait WpCommand
             ->quiet()
             ->siteAlias($target);
 
-        if (strpos($target, 'prod') !== false && !$this->confirm(sprintf('This will make changes on the "%s" datebase, are you sure you want to continue?', $target))) {
+        if (strpos($target, 'prod') !== false && ! $this->confirm(sprintf('This will make changes on the "%s" datebase, are you sure you want to continue?', $target))) {
             throw new AbortTasksException('Cancelled');
         }
 
@@ -441,7 +452,7 @@ trait WpCommand
             $wpcli->executable($executable);
         }
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             throw new RuntimeException(sprintf('File does not exist: %s', $path));
         }
 
@@ -457,11 +468,11 @@ trait WpCommand
             $path = $matches[1];
         }
 
-        if (!is_readable($path)) {
+        if (! is_readable($path)) {
             throw new RuntimeException(sprintf('File is not readable: %s', $path));
         }
 
-        if (!empty($options['debug'])) {
+        if (! empty($options['debug'])) {
             $wpcli->debug();
         }
 
@@ -489,6 +500,7 @@ trait WpCommand
     {
         $search = parse_url($search, PHP_URL_HOST) ?? $search;
         $replace = parse_url($replace, PHP_URL_HOST) ?? $replace;
+
         return $this->dbSearchReplace($target, $search, $replace, array_merge($options, [
             'tables' => ['wp_site', 'wp_blogs'],
         ]));
@@ -525,7 +537,7 @@ trait WpCommand
             ->quiet()
             ->siteAlias($target);
 
-        if (!empty($options['debug'])) {
+        if (! empty($options['debug'])) {
             $wpcli->debug();
         }
 
@@ -553,7 +565,7 @@ trait WpCommand
             ->quiet()
             ->siteAlias($target);
 
-        if (!empty($options['debug'])) {
+        if (! empty($options['debug'])) {
             $wpcli->debug();
         }
 

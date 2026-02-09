@@ -2,7 +2,6 @@
 
 namespace Generoi\Robo\Task\Placeholder;
 
-use Robo;
 use Robo\Result;
 use Robo\Task\BaseTask;
 
@@ -51,6 +50,7 @@ class Replace extends BaseTask
     public function in(array $files)
     {
         $this->files = $files;
+
         return $this;
     }
 
@@ -63,6 +63,7 @@ class Replace extends BaseTask
     public function with($to)
     {
         $this->to = $to;
+
         return $this;
     }
 
@@ -85,13 +86,14 @@ class Replace extends BaseTask
             if ($count > 0) {
                 $res = file_put_contents($file, $text);
                 if ($res === false) {
-                    return Result::error($this, "Error writing to file {filename}.", ['filename' => $file]);
+                    return Result::error($this, 'Error writing to file {filename}.', ['filename' => $file]);
                 }
-                $this->printTaskSuccess("{filename} updated. {count} items replaced", ['filename' => $file, 'count' => $count]);
+                $this->printTaskSuccess('{filename} updated. {count} items replaced', ['filename' => $file, 'count' => $count]);
             } else {
-                $this->printTaskInfo("{filename} unchanged. {count} items replaced", ['filename' => $file, 'count' => $count]);
+                $this->printTaskInfo('{filename} unchanged. {count} items replaced', ['filename' => $file, 'count' => $count]);
             }
         }
+
         return Result::success($this, '', ['replaced' => $count]);
     }
 }

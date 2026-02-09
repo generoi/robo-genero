@@ -13,6 +13,7 @@ trait SearchReplaceCommand
      * @param  string  $from  The search string
      * @param  string  $to  The replacement value
      * @param  array  $options
+     *
      * @option $dirs (string|array) Directories to search in
      * @option $exclude (string|array) Paths to exclude from search
      */
@@ -44,7 +45,7 @@ trait SearchReplaceCommand
                 $options['force'] = $this->io()->confirm(sprintf('Do you want to replace all instances of "%s" with "%s" in these files?', $from, $to));
             }
 
-            if (!empty($options['force'])) {
+            if (! empty($options['force'])) {
                 $tasks->addTask(
                     $this->taskPlaceholderReplace($from)
                         ->with($to)
