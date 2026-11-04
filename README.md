@@ -160,6 +160,14 @@ task:
         humanReadable: true
 ```
 
+#### Package manager
+
+`build:*`, `install:development` and `test:theme` run npm, pnpm or yarn,
+detected from the theme directory up to the project root: the first
+`packageManager` field in a `package.json`, else the first `pnpm-lock.yaml`,
+`yarn.lock` or `package-lock.json`. Nothing found means npm. Set
+`package_manager: pnpm` in `robo.yml` to override.
+
 ## Usage
 
 ```sh
