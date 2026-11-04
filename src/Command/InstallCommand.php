@@ -2,11 +2,13 @@
 
 namespace Generoi\Robo\Command;
 
+use Generoi\Robo\Common\PackageManagerTrait;
 use Generoi\Robo\Common\ThemeTrait;
 use Robo\Contract\TaskInterface;
 
 trait InstallCommand
 {
+    use PackageManagerTrait;
     use ThemeTrait;
 
     /**
@@ -35,7 +37,7 @@ trait InstallCommand
         $tasks->taskComposerInstall()
             ->dir($this->getThemePath());
 
-        $tasks->taskNpmInstall()
+        $tasks->taskNpmInstall($this->getPackageManager($this->getThemePath()))
             ->dir($this->getThemePath());
 
         if (! file_exists('.env')) {

@@ -22,6 +22,18 @@ class NpmRun extends Robo\Task\Npm\Base
     protected $action = 'run-script';
 
     /**
+     * @param  string|null  $pathToNpm  npm, or `pnpm` / `yarn`.
+     */
+    public function __construct($pathToNpm = null)
+    {
+        parent::__construct($pathToNpm);
+
+        if ($pathToNpm && basename($pathToNpm) !== 'npm') {
+            $this->action = 'run';
+        }
+    }
+
+    /**
      * Script to run.
      *
      * @param  string  $script

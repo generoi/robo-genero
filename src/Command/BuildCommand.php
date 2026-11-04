@@ -2,11 +2,13 @@
 
 namespace Generoi\Robo\Command;
 
+use Generoi\Robo\Common\PackageManagerTrait;
 use Generoi\Robo\Common\ThemeTrait;
 use Robo\Contract\TaskInterface;
 
 trait BuildCommand
 {
+    use PackageManagerTrait;
     use ThemeTrait;
 
     /**
@@ -16,7 +18,7 @@ trait BuildCommand
         'npm-script' => 'build:production',
     ]): TaskInterface
     {
-        return $this->taskNpmRun()
+        return $this->taskNpmRun($this->getPackageManager($this->getThemePath()))
             ->rawScript($options['npm-script'])
             ->dir($this->getThemePath());
     }
@@ -28,7 +30,7 @@ trait BuildCommand
         'npm-script' => 'build',
     ]): TaskInterface
     {
-        return $this->taskNpmRun()
+        return $this->taskNpmRun($this->getPackageManager($this->getThemePath()))
             ->rawScript($options['npm-script'])
             ->dir($this->getThemePath());
     }

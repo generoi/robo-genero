@@ -2,12 +2,14 @@
 
 namespace Generoi\Robo\Command;
 
+use Generoi\Robo\Common\PackageManagerTrait;
 use Generoi\Robo\Common\ThemeTrait;
 use Robo\Contract\TaskInterface;
 use Robo\Result;
 
 trait TestCommand
 {
+    use PackageManagerTrait;
     use ThemeTrait;
 
     /**
@@ -81,7 +83,7 @@ trait TestCommand
      */
     public function testTheme(array $options = ['command' => 'test']): TaskInterface
     {
-        return $this->taskNpmRun()
+        return $this->taskNpmRun($this->getPackageManager($this->getThemePath()))
             ->script($options['command'])
             ->dir($this->getThemePath());
     }
