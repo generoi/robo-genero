@@ -352,6 +352,19 @@ class WpCliStack extends CommandStack
     }
 
     /**
+     * Treat the search string as a regular expression.
+     * `wp search-replace` option.
+     *
+     * @return $this
+     */
+    public function regex()
+    {
+        $this->argForNextCommand('--regex');
+
+        return $this;
+    }
+
+    /**
      * Do not perform the replacement on specific columns.
      * `wp search-replace` option.
      *
