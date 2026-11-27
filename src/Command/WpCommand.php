@@ -299,8 +299,26 @@ trait WpCommand
         if (! empty($options['hostnames']) && $searchHost && $replaceHost && $searchHost !== $replaceHost) {
             $wpcli
                 ->network()
-                ->skipColumns('guid')
-                ->searchReplace($searchHost, $replaceHost, $options['tables']);
+                ->skipColumns('guid');
+
+            $at = strpos($replaceHost, $searchHost);
+            if ($at === false) {
+                $wpcli->searchReplace($searchHost, $replaceHost, $options['tables']);
+            } else {
+                // The replace host contains the search host (potwell.fi →
+                // potwell.fi.ddev.site), so a plain pass would also match inside
+                // the URLs the pass above just wrote and double them. Match the
+                // search host only where it isn't already part of the replace host.
+                $before = substr($replaceHost, 0, $at);
+                $after = substr($replaceHost, $at + strlen($searchHost));
+                $pattern = ($before !== '' ? '(?<!'.preg_quote($before, '/').')' : '')
+                    .preg_quote($searchHost, '/')
+                    .($after !== '' ? '(?!'.preg_quote($after, '/').')' : '');
+
+                $wpcli
+                    ->regex()
+                    ->searchReplace(escapeshellarg($pattern), $replaceHost, $options['tables']);
+            }
         }
 
         if (! empty($options['flush'])) {
